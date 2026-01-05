@@ -1,0 +1,6 @@
+@QAgentApi_HostAddress = http://localhost:5078
+
+GET {{QAgentApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
