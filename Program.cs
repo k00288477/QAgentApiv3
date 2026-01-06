@@ -17,6 +17,9 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 
 // Service Layer
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<OrganisationService>();
+builder.Services.AddScoped<TestSuiteService>();
+builder.Services.AddScoped<TestCaseService>();
 
 // Repository Layer
 builder.Services.AddScoped<IUserRepository, UserRepository>();
