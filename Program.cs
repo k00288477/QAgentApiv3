@@ -15,10 +15,13 @@ builder.Services.AddDbContext<AppDBContext>(options =>
    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-// app services
+// Service Layer
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<OrganisationService>();
+builder.Services.AddScoped<TestSuiteService>();
+builder.Services.AddScoped<TestCaseService>();
 
-// Repositories
+// Repository Layer
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrganisationRepository, OrganisationRepository>();
 builder.Services.AddScoped<ITestSuiteRepository, TestSuiteRepository>();

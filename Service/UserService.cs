@@ -1,33 +1,50 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QAgentApi.Data;
 using QAgentApi.Model;
+using QAgentApi.Repository;
 
 namespace QAgentApi.Service
 {
     public class UserService
     {
-        // DB permission
-        private readonly AppDBContext _context;
+        // Dependency Injection
+        private UserRepository _userRepo;
         // CONSTRUCTOR
-        public UserService(AppDBContext context)
+        public UserService(UserRepository userRepo)
         {
-            _context = context;
+            _userRepo = userRepo;
         }
 
         // METHODS
 
-        // get all users
-        public async Task<List<User>> GetAllUsers()
+        // Get User by Id
+        public async Task<User?> GetUserById(int userId)
         {
-            return await _context.Users.ToListAsync();
+            return await _userRepo.GetUserById(userId);
+        }
+
+        // Get User by Email
+        public async Task<User?> GetUserByEmail(string email)
+        {
+            return await _userRepo.GetUserByEmail(email);
         }
 
         // Add User
         public async Task<User> AddUser(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return user;
+            return await _userRepo.InsertNewUser(user);
+        }
+
+        // Update User
+        public async Task<User> UpdateUser(User user)
+        {
+            return await _userRepo.UpdateUser(user);
+        }
+
+        // Delete User by Id
+        public async Task DeleteUserById(int userId)
+        {
+            await _userRepo.DeleteUserById(userId);
         }
     }
 }
