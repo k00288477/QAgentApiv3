@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using QAgentApi.Data;
+using QAgentApi.Repository;
+using QAgentApi.Repository.Interfaces;
 using QAgentApi.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,13 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 
 // app services
 builder.Services.AddScoped<UserService>();
+
+// Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IOrganisationRepository, OrganisationRepository>();
+builder.Services.AddScoped<ITestSuiteRepository, TestSuiteRepository>();
+builder.Services.AddScoped<ITestCaseRepository, TestCaseRepository>();
+builder.Services.AddScoped<ITestStepRepository, TestStepRepository>();
 
 var app = builder.Build();
 
