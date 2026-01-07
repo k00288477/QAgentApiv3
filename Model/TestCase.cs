@@ -5,9 +5,15 @@ namespace QAgentApi.Model
 {
     public class TestCase
     {
-        public TestCase()
+        public TestCase() { }
+        public TestCase(string title, string description, string author)
         {
+            Title = title;
+            Description = description;
+            Author = author;
+            DateCreated = DateTime.UtcNow;
         }
+        
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

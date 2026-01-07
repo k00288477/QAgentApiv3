@@ -1,13 +1,13 @@
-﻿using QAgentApi.Repository;
+﻿using QAgentApi.Repository.Interfaces;
 
 namespace QAgentApi.Service
 {
     public class TestSuiteService
     {
         // Dependency Injection
-        private TestSuiteRepository _testSuiteRepository;
+        private ITestSuiteRepository _testSuiteRepository;
         // CONSTRUCTOR
-        public TestSuiteService(TestSuiteRepository testSuiteRepository)
+        public TestSuiteService(ITestSuiteRepository testSuiteRepository)
         {
             _testSuiteRepository = testSuiteRepository;
         }

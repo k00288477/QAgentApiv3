@@ -5,8 +5,11 @@ namespace QAgentApi.Model
 {
     public class User
     {
-        public User()
+        public User() { } // Parameterless constructor for EF
+        public User(string name, string email)
         {
+            Name = name;
+            Email = email;
         }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -1,15 +1,16 @@
 ﻿using QAgentApi.Model;
 using QAgentApi.Repository;
+using QAgentApi.Repository.Interfaces;
 
 namespace QAgentApi.Service
 {
     public class OrganisationService
     {
         // Dependency Injection
-        private OrganisationRepository _orgRepo;
+        private IOrganisationRepository _orgRepo;
 
         // CONSTRUCTOR
-        public OrganisationService(OrganisationRepository orgRepo)
+        public OrganisationService(IOrganisationRepository orgRepo)
         {
             _orgRepo = orgRepo;
         }

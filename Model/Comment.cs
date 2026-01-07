@@ -5,8 +5,13 @@ namespace QAgentApi.Model
 {
     public class Comment
     {
-        public Comment()
+        public Comment() { } // Parameterless constructor for EF
+        public Comment(string content, string author, int reportId)
         {
+            Content = content;
+            Author = author;
+            DateTimeCreated = DateTime.UtcNow;
+            ExecutionReportId = reportId;
         }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

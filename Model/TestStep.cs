@@ -5,8 +5,12 @@ namespace QAgentApi.Model
 {
     public class TestStep
     {
-        public TestStep()
+        public TestStep() { }
+        public TestStep(string content, string index, int testCaseId)
         {
+            Content = content;
+            Index = index;
+            TestCaseId = testCaseId;
         }
 
         [Key]
