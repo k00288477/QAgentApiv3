@@ -4,9 +4,18 @@ namespace QAgentApi.Model
 {
     public class TestSuite
     {
-        public TestSuite()
+        public TestSuite() { }
+        public TestSuite(int testSuiteId, string title, string description, int? organisationId, string author)
         {
+            TestSuiteId = testSuiteId;
+            Title = title;
+            Description = description;
+            OrganisationId = organisationId;
+            Author = author;
+            DateCreated = DateTime.UtcNow;
         }
+
+
         public int TestSuiteId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

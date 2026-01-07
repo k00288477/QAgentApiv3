@@ -7,6 +7,15 @@ namespace QAgentApi.Model
     {
         public ExecutionReport() { }
 
+        public ExecutionReport(TestCase testCase, DateTime executionDateTime, string executedBy, Status status, int executionRunId)
+        {
+            TestCase = testCase;
+            ExecutionDateTime = executionDateTime;
+            ExecutedBy = executedBy;
+            Status = status;
+            ExecutionRunId = executionRunId;
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ExecutionReportId { get; set; }

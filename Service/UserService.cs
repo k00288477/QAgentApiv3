@@ -1,16 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using QAgentApi.Data;
-using QAgentApi.Model;
-using QAgentApi.Repository;
+﻿using QAgentApi.Model;
+using QAgentApi.Repository.Interfaces;
 
 namespace QAgentApi.Service
 {
     public class UserService
     {
         // Dependency Injection
-        private UserRepository _userRepo;
+        private IUserRepository _userRepo;
         // CONSTRUCTOR
-        public UserService(UserRepository userRepo)
+        public UserService(IUserRepository userRepo)
         {
             _userRepo = userRepo;
         }

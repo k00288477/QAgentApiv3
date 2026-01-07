@@ -5,9 +5,12 @@ namespace QAgentApi.Model
 {
     public class Organisation
     {
-        public Organisation()
+        public Organisation() { }
+        public Organisation(string name)
         {
+            Name = name;
         }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrgId { get; set; }
