@@ -18,7 +18,7 @@ namespace QAgentApi.Controllers
         [HttpGet]
         public User TestMethod()
         {
-            return new User(1, "Admin", "admin@admin.com");
+            return new User("Admin", "admin@admin.com");
         }
 
     }
