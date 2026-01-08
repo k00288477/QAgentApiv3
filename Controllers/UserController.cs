@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QAgentApi.Model;
 using QAgentApi.Service;
 
@@ -15,6 +16,7 @@ namespace QAgentApi.Controllers
             _userService = userService;
         }
 
+        [Authorize]
         [HttpGet]
         public User TestMethod()
         {

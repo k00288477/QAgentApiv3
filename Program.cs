@@ -3,6 +3,9 @@ using QAgentApi.Data;
 using QAgentApi.Repository;
 using QAgentApi.Repository.Interfaces;
 using QAgentApi.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,11 +18,30 @@ builder.Services.AddDbContext<AppDBContext>(options =>
    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+// Authentication and Authorization
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
+            ValidAudience = builder.Configuration["AppSettings:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!)
+            )
+        };
+    });
+
 // Service Layer
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<OrganisationService>();
 builder.Services.AddScoped<TestSuiteService>();
 builder.Services.AddScoped<TestCaseService>();
+builder.Services.AddScoped<AuthService>();
 
 // Repository Layer
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -37,6 +59,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
