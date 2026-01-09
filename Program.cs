@@ -89,6 +89,25 @@ builder.Services.AddScoped<ITestCaseRepository, TestCaseRepository>();
 builder.Services.AddScoped<ITestStepRepository, TestStepRepository>();
 
 var app = builder.Build();
+// run db migration on startup for production environment
+if (app.Environment.IsProduction())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var context = services.GetRequiredService<AppDBContext>();
+            context.Database.Migrate();
+            Console.WriteLine("Database migrations applied successfully!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while migrating the database: {ex.Message}");
+            throw;
+        }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
