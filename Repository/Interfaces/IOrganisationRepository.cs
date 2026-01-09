@@ -6,7 +6,7 @@ namespace QAgentApi.Repository.Interfaces
     {
         Task<Organisation> InsertNewOrg(Organisation org);
         Task<Organisation> UpdateOrg(Organisation org);
-        Task<Organisation> GetOrgById(int orgId);
+        Task<Organisation?> GetOrgById(int orgId);
         Task DeleteOrgById(int orgId);
     }
 }
