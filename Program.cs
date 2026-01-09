@@ -16,7 +16,11 @@ builder.Services.AddOpenApi();
 
 // Database Provider
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
+if (builder.Environment.IsProduction())
+{
+    connectionString = "Server=mysql.railway.internal;Port=3306;Database=railway;User=root;Password=orUvIsUGNkJflLQEjCvRKKYYgqPjVccU;";
+    Console.WriteLine("Using hardcoded production connection string");
+}
 // Detect database provider
 if (connectionString.Contains("Server=localhost") || connectionString.Contains("SQLExpress"))
 {
