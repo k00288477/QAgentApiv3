@@ -14,7 +14,6 @@ namespace QAgentApi.Model
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Required]
         public string? Name { get; set; }
         [Required]
         public string Email { get; set; }
@@ -23,6 +22,7 @@ namespace QAgentApi.Model
         public Organisation? Organisation { get; set; } // User not required to belong to an organisation. 
 
         // auth
+        [Required]
         public string PasswordHash { get; set; }
 
     }

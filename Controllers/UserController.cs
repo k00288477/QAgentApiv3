@@ -16,11 +16,11 @@ namespace QAgentApi.Controllers
             _userService = userService;
         }
 
-        [Authorize]
-        [HttpGet]
-        public User TestMethod()
+        
+        [HttpGet("Test")]
+        public string TestMethod()
         {
-            return new User("Admin", "admin@admin.com");
+            return "Api reached succesfully.";
         }
 
     }

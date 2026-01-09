@@ -32,7 +32,7 @@ namespace QAgentApi.Controllers
             var token = await authService.LoginAysnc(request);
             if(token is null)
             {
-                BadRequest("Invalid email or password");
+                return BadRequest("Invalid email or password");
             }
             return Ok(token);
         }

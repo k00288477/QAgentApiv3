@@ -68,7 +68,7 @@ namespace QAgentApi.Service
             };
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_config.GetValue<string>("AppSetting:Token")!)
+                Encoding.UTF8.GetBytes(_config.GetValue<string>("AppSettings:Token")!)
                 );
 
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512); // 512 bit string token
