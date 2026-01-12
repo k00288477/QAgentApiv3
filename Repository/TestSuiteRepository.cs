@@ -33,9 +33,11 @@ namespace QAgentApi.Repository
                 .FirstOrDefaultAsync();
         }
 
-        public Task<TestSuite> InsertNewTestSuite(TestSuite testSuite)
+        public async Task<TestSuite> InsertNewTestSuite(TestSuite testSuite)
         {
-            throw new NotImplementedException();
+            await _context.TestSuites.AddAsync(testSuite);
+            await  _context.SaveChangesAsync();
+            return testSuite;
         }
 
         public Task<TestSuite> UpdateTestSuite(TestSuite testSuite)

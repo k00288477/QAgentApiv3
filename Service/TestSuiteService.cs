@@ -18,5 +18,10 @@ namespace QAgentApi.Service
         {
             return await _testSuiteRepository.GetAllTestSuitesByAuthor(authorEmail);
         }
+
+        public async Task<TestSuite> AddNewTestSuite(TestSuite testSuite)
+        {
+            return await _testSuiteRepository.InsertNewTestSuite(testSuite);
+        }
     }
 }

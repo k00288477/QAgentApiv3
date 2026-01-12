@@ -36,10 +36,25 @@ namespace QAgentApi.Controllers
             return Ok(testSuites);
         }
 
-        // Add new Test Suite
-        
+        // Add new Test Suite (No Test Cases)
+        [HttpPost("AddNewTestSuite")]
+        public async Task<ActionResult<TestSuite>> AddNewTestSuite([FromBody] TestSuite testSuite)
+        {
+            // Validate input
+            if (testSuite == null || string.IsNullOrEmpty(testSuite.Title) || string.IsNullOrEmpty(testSuite.Author))
+            {
+                return BadRequest("Invalid test suite data.");
+            }
+
+            // Add the new test suite using the service
+            var createdTestSuite = await _testSuiteService.AddNewTestSuite(testSuite);
+
+            // Return the created test suite with a 201 status code
+            return Ok(createdTestSuite);
+        }
 
 
-        // Add new Test Case
+        // Add new Test Case (No Test Suite association)
+        //[HttpPost("AddNewTestCase")]
     }
 }

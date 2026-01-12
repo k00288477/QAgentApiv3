@@ -21,7 +21,7 @@ namespace QAgentApi.Model
         public string Description { get; set; }
         public int? OrganisationId { get; set; }
         [ForeignKey(nameof(OrganisationId))]
-        public Organisation Organisation { get; set; }
+        public Organisation? Organisation { get; set; }
         public string Author { get; set; }
         public DateTime DateCreated { get; set; }
         public List<TestCase>? TestCases { get; set; }
