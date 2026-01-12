@@ -7,10 +7,12 @@ namespace QAgentApi.Service
     {
         // Dependency Injection
         private readonly ITestSuiteRepository _testSuiteRepository;
+        private readonly ITestCaseRepository _testCaseRepository;
         // CONSTRUCTOR
-        public TestSuiteService(ITestSuiteRepository testSuiteRepository)
+        public TestSuiteService(ITestSuiteRepository testSuiteRepository, ITestCaseRepository testCaseRepository    )
         {
             _testSuiteRepository = testSuiteRepository;
+            _testCaseRepository = testCaseRepository;
         }
 
         // METHODS
@@ -23,5 +25,11 @@ namespace QAgentApi.Service
         {
             return await _testSuiteRepository.InsertNewTestSuite(testSuite);
         }
+
+        public async Task<TestCase> AddNewTestCase(TestCase testCase)
+        {
+            return await _testCaseRepository.InsertNewTestCase(testCase);
+        }
+
     }
 }

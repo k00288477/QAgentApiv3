@@ -24,7 +24,7 @@ namespace QAgentApi.Controllers
             //var userEmail = User.FindFirst(ClaimTypes.Name)?.Value;
             var userEmail = "newemail@example.com";
             // check if null
-            if(string.IsNullOrEmpty(userEmail))
+            if (string.IsNullOrEmpty(userEmail))
             {
                 return NotFound("User not authorized");
             }
@@ -54,7 +54,31 @@ namespace QAgentApi.Controllers
         }
 
 
-        // Add new Test Case (No Test Suite association)
-        //[HttpPost("AddNewTestCase")]
+        // Add new Test Case (No Test Suite association required,can accept association)
+        [HttpPost("AddNewTestCase")]
+        public async Task<ActionResult<TestCase>> AddNewTestCase([FromBody] TestCase testCase)
+        {
+            // Get the user email from JWT Token
+            var userEmail = User.FindFirst(ClaimTypes.Name)?.Value;
+            // Check if null
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return NotFound("User not authorized");
+            }
+            // Check if author matches the user email
+            if (testCase == null || string.IsNullOrEmpty(testCase.Title) || testCase.Author != userEmail)
+            {
+                return BadRequest("Invalid test case data or unauthorized author.");
+            }
+
+            // Add Test Case to database
+            var createdTestCase = await _testSuiteService.AddNewTestCase(testCase);
+
+            return Ok(createdTestCase);
+        }
+
+        // Add Test Case to existing Test Suite
+        //[HttpPost("AddTestCaseToSuite/{testSuiteId}")] - TODO
+
     }
 }
