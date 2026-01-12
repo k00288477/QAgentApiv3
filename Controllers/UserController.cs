@@ -18,7 +18,7 @@ namespace QAgentApi.Controllers
             _userService = userService;
         }
 
-
+        [Authorize]
         [HttpGet("getUserProfile")]
         public async Task<ActionResult<UserProfileDto>> GetUserProfile()
         {
@@ -47,6 +47,44 @@ namespace QAgentApi.Controllers
                 Organisation = user.Organisation
             };
             // return user
+            return Ok(userProfile);
+        }
+
+        [Authorize]
+        [HttpPut("updateUserProfile")]
+        public async Task<ActionResult<User>> UpdateUserProfile(UserProfileDto userProfileDto)
+        {
+            // Get existing user from JWT Claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return Unauthorized("Invalid token");
+            }
+            
+            // Get the existing user by ID
+            var existingUser = await _userService.GetUserById(userId);
+            if (existingUser == null)
+            {
+                return NotFound("User Not Found");
+            }
+
+            // Update fields
+            existingUser.Name = userProfileDto.Name;
+            existingUser.Email = userProfileDto.Email;
+            existingUser.OrganisationId = userProfileDto.OrganisationId;
+
+            // Save Changes
+            var updatedUser = await _userService.UpdateUser(existingUser);
+            // Map to response DTO
+            var userProfile = new UserProfileDto
+            {
+                Id = updatedUser.Id,
+                Name = updatedUser.Name,
+                Email = updatedUser.Email,
+                OrganisationId = updatedUser.OrganisationId,
+            };
+            
             return Ok(userProfile);
         }
 
