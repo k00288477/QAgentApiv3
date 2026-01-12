@@ -6,7 +6,7 @@ namespace QAgentApi.Service
     public class UserService
     {
         // Dependency Injection
-        private IUserRepository _userRepo;
+        private readonly IUserRepository _userRepo;
         // CONSTRUCTOR
         public UserService(IUserRepository userRepo)
         {

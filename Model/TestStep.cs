@@ -23,6 +23,6 @@ namespace QAgentApi.Model
         [Required]
         public int TestCaseId { get; set; } // Must be linked to a TestCase
         [ForeignKey(nameof(TestCaseId))]
-        public TestCase TestCase { get; set; } 
+        public TestCase? TestCase { get; set; } 
     }
 }
