@@ -1,11 +1,12 @@
-﻿using QAgentApi.Repository.Interfaces;
+﻿using QAgentApi.Model;
+using QAgentApi.Repository.Interfaces;
 
 namespace QAgentApi.Service
 {
     public class TestSuiteService
     {
         // Dependency Injection
-        private ITestSuiteRepository _testSuiteRepository;
+        private readonly ITestSuiteRepository _testSuiteRepository;
         // CONSTRUCTOR
         public TestSuiteService(ITestSuiteRepository testSuiteRepository)
         {
@@ -13,5 +14,9 @@ namespace QAgentApi.Service
         }
 
         // METHODS
+        public async Task<List<TestSuite>> GetAllTestSuitesByAuthor(string authorEmail)
+        {
+            return await _testSuiteRepository.GetAllTestSuitesByAuthor(authorEmail);
+        }
     }
 }
