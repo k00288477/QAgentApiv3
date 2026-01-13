@@ -17,8 +17,10 @@ namespace QAgentApi.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CommentId { get; set; }
         [Required]
+        [MaxLength(255)]
         public string Content { get; set; }
         [Required]
+        [MaxLength(255)]
         public string Author { get; set; }
         [Required]
         public DateTime DateTimeCreated { get; set; }

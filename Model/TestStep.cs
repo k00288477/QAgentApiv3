@@ -6,7 +6,7 @@ namespace QAgentApi.Model
     public class TestStep
     {
         public TestStep() { }
-        public TestStep(string content, string index, int testCaseId)
+        public TestStep(string content, int index, int testCaseId)
         {
             Content = content;
             Index = index;
@@ -17,9 +17,10 @@ namespace QAgentApi.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int StepId { get; set; }
         [Required]
+        [MaxLength(255)]
         public string Content { get; set; }
         [Required]
-        public string Index { get; set; } // represents step sequence
+        public int Index { get; set; } // represents step sequence
         [Required]
         public int TestCaseId { get; set; } // Must be linked to a TestCase
         [ForeignKey(nameof(TestCaseId))]

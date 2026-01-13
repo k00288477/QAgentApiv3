@@ -14,8 +14,10 @@ namespace QAgentApi.Model
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [MaxLength(255)]
         public string? Name { get; set; }
         [Required]
+        [MaxLength(255)]
         public string Email { get; set; }
         public int? OrganisationId { get; set; } // Foreign key to Organisation, nullable.
         [ForeignKey(nameof(OrganisationId))]
@@ -23,6 +25,7 @@ namespace QAgentApi.Model
 
         // auth
         [Required]
+        [MaxLength(500)]
         public string PasswordHash { get; set; }
 
     }

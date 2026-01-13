@@ -45,7 +45,7 @@ else
 //   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 //);
 
-// Allow Requests from Local Vue app - Must Update for Production
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowVue",

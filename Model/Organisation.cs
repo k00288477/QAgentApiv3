@@ -15,6 +15,7 @@ namespace QAgentApi.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrgId { get; set; }
         [Required]
+        [MaxLength(255)]
         public string Name { get; set; }
         public List<User>? Employees { get; set; }
         public List<TestSuite>? TestSuites { get; set; }

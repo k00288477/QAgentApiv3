@@ -24,6 +24,7 @@ namespace QAgentApi.Model
         [Required]
         public DateTime ExecutionDateTime { get; set; }
         [Required]
+        [MaxLength(255)]
         public string ExecutedBy { get; set; }
         [Required]
         public Status Status { get; set; }

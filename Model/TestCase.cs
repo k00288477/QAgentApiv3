@@ -19,11 +19,14 @@ namespace QAgentApi.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int TestCaseId { get; set; }
         [Required]
+        [MaxLength(255)]
         public string Title { get; set; }
         [Required]
+        [MaxLength(255)]
         public string Description { get; set; }
         public int? TestSuiteId { get; set; } // May not be part of a suite
         [Required]
+        [MaxLength(255)]
         public string Author { get; set; }
         [Required]
         public DateTime DateCreated { get; set; }
