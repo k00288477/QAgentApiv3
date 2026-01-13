@@ -18,13 +18,10 @@ builder.Services.AddControllers()
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-// Database Provider
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (builder.Environment.IsProduction())
-{
-    connectionString = "Server=mysql.railway.internal;Port=3306;Database=railway;User=root;Password=orUvIsUGNkJflLQEjCvRKKYYgqPjVccU;";
-    Console.WriteLine("Using hardcoded production connection string");
-}
+// Get the DB Connection string
+var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
 // Detect database provider
 if (connectionString.Contains("Server=localhost") || connectionString.Contains("SQLExpress"))
 {
@@ -56,7 +53,7 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins(
                 "http://localhost:5173",
-                "https://qagent.netlify.app/" // Demo Frontend URL
+                "https://qagent.netlify.app" // Demo Frontend URL
                 )
                   .AllowAnyHeader()
                   .AllowAnyMethod();
