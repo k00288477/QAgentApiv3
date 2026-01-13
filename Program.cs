@@ -49,6 +49,39 @@ builder.Services.AddCors(options =>
 });
 
 
+//// Authentication and Authorization
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options =>
+//    {
+//        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+//        {
+//            ValidateIssuer = true,
+//            ValidateAudience = true,
+//            ValidateLifetime = true,
+//            ValidateIssuerSigningKey = true,
+//            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
+//            ValidAudience = builder.Configuration["AppSettings:Audience"],
+//            IssuerSigningKey = new SymmetricSecurityKey(
+//                Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!)
+//            )
+//        };
+//    });
+
+// Get JWT settings with fallback
+var jwtIssuer = builder.Configuration["AppSettings:Issuer"]
+    ?? Environment.GetEnvironmentVariable("AppSettings__Issuer")
+    ?? "QAgentIssuer";
+
+var jwtAudience = builder.Configuration["AppSettings:Audience"]
+    ?? Environment.GetEnvironmentVariable("AppSettings__Audience")
+    ?? "QAgentAudience";
+
+var jwtToken = builder.Configuration["AppSettings:Token"]
+    ?? Environment.GetEnvironmentVariable("AppSettings__Token")
+    ?? throw new InvalidOperationException("JWT Token not configured");
+
+Console.WriteLine($"JWT Config - Issuer: {jwtIssuer}, Audience: {jwtAudience}, Token Length: {jwtToken?.Length ?? 0}");
+
 // Authentication and Authorization
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -59,10 +92,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
-            ValidAudience = builder.Configuration["AppSettings:Audience"],
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!)
+                Encoding.UTF8.GetBytes(jwtToken)
             )
         };
     });
