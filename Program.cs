@@ -22,24 +22,12 @@ builder.Services.AddOpenApi();
 var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING")
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Detect database provider
-if (connectionString.Contains("Server=localhost") || connectionString.Contains("SQLExpress"))
-{
-    // SQL Server (local development)
-    builder.Services.AddDbContext<AppDBContext>(options =>
-        options.UseSqlServer(connectionString)
-    );
-}
-else
-{
-    // MySQL (production on Railway)
-    builder.Services.AddDbContext<AppDBContext>(options =>
-        options.UseMySql(
-            connectionString,
-            new MySqlServerVersion(new Version(8, 0, 21))
-        )
-    );
-}
+builder.Services.AddDbContext<AppDBContext>(options =>
+    options.UseMySql(
+        connectionString,
+        new MySqlServerVersion(new Version(8, 0, 21))
+    )
+);
 
 //builder.Services.AddDbContext<AppDBContext>(options =>
 //   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -105,18 +93,6 @@ if (app.Environment.IsProduction())
         {
             var context = services.GetRequiredService<AppDBContext>();
 
-            // Drop all tables to start fresh
-            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS TestSteps");
-            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS TestCases");
-            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS TestSuites");
-            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS Users");
-            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS ExecutionRuns");
-            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS Organisations");
-            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS __EFMigrationsHistory");
-
-            Console.WriteLine("Dropped existing tables");
-
-            // Now apply migrations fresh
             context.Database.Migrate();
             Console.WriteLine("Database migrations applied successfully!");
         }
