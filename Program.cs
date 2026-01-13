@@ -94,6 +94,7 @@ builder.Services.AddScoped<ITestCaseRepository, TestCaseRepository>();
 builder.Services.AddScoped<ITestStepRepository, TestStepRepository>();
 
 var app = builder.Build();
+
 // run db migration on startup for production environment
 if (app.Environment.IsProduction())
 {
@@ -103,6 +104,19 @@ if (app.Environment.IsProduction())
         try
         {
             var context = services.GetRequiredService<AppDBContext>();
+
+            // Drop all tables to start fresh
+            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS TestSteps");
+            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS TestCases");
+            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS TestSuites");
+            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS Users");
+            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS ExecutionRuns");
+            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS Organisations");
+            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS __EFMigrationsHistory");
+
+            Console.WriteLine("Dropped existing tables");
+
+            // Now apply migrations fresh
             context.Database.Migrate();
             Console.WriteLine("Database migrations applied successfully!");
         }

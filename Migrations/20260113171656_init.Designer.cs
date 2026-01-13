@@ -12,8 +12,8 @@ using QAgentApi.Data;
 namespace QAgentApi.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20260113164426_init.20260113")]
-    partial class init20260113
+    [Migration("20260113171656_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
