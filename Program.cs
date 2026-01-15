@@ -8,7 +8,11 @@ using QAgentApi.Service;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
+Console.WriteLine("========================================");
+Console.WriteLine("APPLICATION BUILD COMPLETE");
+Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
+Console.WriteLine($"Is Production: {app.Environment.IsProduction()}");
+Console.WriteLine("========================================");
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -148,6 +152,8 @@ if (app.Environment.IsProduction())
     }
 }
 
+
+Console.WriteLine("CONFIGURING MIDDLEWARE...")
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -163,5 +169,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+Console.WriteLine("========================================");
+Console.WriteLine("STARTING APPLICATION...");
+Console.WriteLine("========================================");
 
 app.Run();
