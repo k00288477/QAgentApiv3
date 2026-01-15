@@ -153,7 +153,7 @@ if (app.Environment.IsProduction())
 }
 
 
-Console.WriteLine("CONFIGURING MIDDLEWARE...")
+Console.WriteLine("CONFIGURING MIDDLEWARE...");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
