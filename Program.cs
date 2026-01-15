@@ -175,4 +175,8 @@ Console.WriteLine("========================================");
 Console.WriteLine("STARTING APPLICATION...");
 Console.WriteLine("========================================");
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+var url = $"http://0.0.0.0:{port}";
+Console.WriteLine($"Listening on: {url}");
+
 app.Run();
