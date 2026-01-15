@@ -163,6 +163,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowVue");
 
+app.Use(async (context, next) =>
+{
+    Console.WriteLine("===========================================");
+    Console.WriteLine($"REQUEST RECEIVED: {context.Request.Method} {context.Request.Path}");
+    Console.WriteLine($"From: {context.Connection.RemoteIpAddress}");
+    Console.WriteLine("===========================================");
+    await next();
+    Console.WriteLine($"RESPONSE: {context.Response.StatusCode}");
+});
 // app.UseHttpsRedirection();
 
 app.UseAuthentication();
