@@ -8,11 +8,6 @@ using QAgentApi.Service;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-Console.WriteLine("========================================");
-Console.WriteLine("APPLICATION BUILD COMPLETE");
-Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
-Console.WriteLine($"Is Production: {app.Environment.IsProduction()}");
-Console.WriteLine("========================================");
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -130,6 +125,12 @@ builder.Services.AddScoped<ITestCaseRepository, TestCaseRepository>();
 builder.Services.AddScoped<ITestStepRepository, TestStepRepository>();
 
 var app = builder.Build();
+
+Console.WriteLine("========================================");
+Console.WriteLine("APPLICATION BUILD COMPLETE");
+Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
+Console.WriteLine($"Is Production: {app.Environment.IsProduction()}");
+Console.WriteLine("========================================");
 
 // run db migration on startup for production environment
 if (app.Environment.IsProduction())
