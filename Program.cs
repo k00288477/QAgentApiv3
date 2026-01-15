@@ -45,7 +45,8 @@ builder.Services.AddCors(options =>
                 "https://qagent.netlify.app" // Demo Frontend URL
                 )
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
 
