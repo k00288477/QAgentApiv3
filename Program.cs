@@ -34,19 +34,30 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 //);
 
 
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowVue",
+//         policy =>
+//         {
+//             policy.WithOrigins(
+//                 "http://localhost:5173",
+//                 "http://localhost:4173", // local build preview
+//                 "https://qagent.netlify.app" // Demo Frontend URL
+//                 )
+//                   .AllowAnyHeader()
+//                   .AllowAnyMethod()
+//                 .AllowCredentials();
+//         });
+// });
+// Testing Poicy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowVue",
         policy =>
         {
-            policy.WithOrigins(
-                "http://localhost:5173",
-                "http://localhost:4173", // local build preview
-                "https://qagent.netlify.app" // Demo Frontend URL
-                )
+            policy.AllowAnyOrigin() // Temporary - allows all origins
                   .AllowAnyHeader()
-                  .AllowAnyMethod()
-                .AllowCredentials();
+                  .AllowAnyMethod();
         });
 });
 
