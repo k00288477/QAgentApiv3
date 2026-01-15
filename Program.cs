@@ -41,15 +41,11 @@ builder.Services.AddCors(options =>
             policy.WithOrigins(
                 "http://localhost:5173",
                 "http://localhost:4173",
-                "http://localhost:3000",
-                "https://localhost:5173",
-                "https://localhost:4173",
-                "https://localhost:3000",
-                "https://qagent.netlify.app" // Demo Frontend URL
+                "https://qagent.netlify.app"
                 )
                   .AllowAnyHeader()
                   .AllowAnyMethod()
-                  .AllowCredentials();
+                .AllowCredentials();
         });
 });
 //builder.Services.AddCors(options =>
@@ -160,7 +156,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowVue");
 
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
