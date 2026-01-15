@@ -16,13 +16,19 @@ namespace QAgentApi.Controllers
             _testSuiteService = testSuiteService;
         }
 
+        [HttpGet("TestNoAuth")]
+        public ActionResult<string> Test()
+        {
+            return Ok("TestLibraryController is working!");
+        }
+
         // Get all test cases for the logged in user
         [HttpGet("GetAllTests")]
         public async Task<ActionResult<TestSuite>> GetAllTests()
         {
             // Get the user email from JWT Token
-            //var userEmail = User.FindFirst(ClaimTypes.Name)?.Value;
-            var userEmail = "newemail@example.com";
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            
             // check if null
             if (string.IsNullOrEmpty(userEmail))
             {
