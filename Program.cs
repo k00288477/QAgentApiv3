@@ -160,7 +160,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowVue");
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
