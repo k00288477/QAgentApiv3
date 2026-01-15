@@ -27,8 +27,8 @@ namespace QAgentApi.Controllers
         public async Task<ActionResult<TestSuite>> GetAllTests()
         {
             // Get the user email from JWT Token
-            // var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            var userEmail = "gary@tus.ie";
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            // var userEmail = "gary@tus.ie";
             // check if null
             if (string.IsNullOrEmpty(userEmail))
             {
