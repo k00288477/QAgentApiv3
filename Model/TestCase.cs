@@ -6,8 +6,9 @@ namespace QAgentApi.Model
     public class TestCase
     {
         public TestCase() { }
-        public TestCase(string title, string description, string author)
+        public TestCase(int testCaseId, string title, string description, string author)
         {
+            TestCaseId = testCaseId;
             Title = title;
             Description = description;
             Author = author;
