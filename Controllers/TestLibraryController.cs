@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QAgentApi.Model;
 using QAgentApi.Service;
@@ -24,6 +25,7 @@ namespace QAgentApi.Controllers
 
         // Get all test cases for the logged in user
         [HttpGet("GetAllTests")]
+        [Authorize]
         public async Task<ActionResult<TestSuite>> GetAllTests()
         {
             // Get the user email from JWT Token
@@ -44,23 +46,33 @@ namespace QAgentApi.Controllers
 
         // Add new Test Suite (No Test Cases)
         [HttpPost("AddNewTestSuite")]
+        [Authorize]
         public async Task<ActionResult<TestSuite>> AddNewTestSuite([FromBody] TestSuite testSuite)
         {
+            // Get the user email from JWT Token
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return NotFound("User not authorized");
+            }
+            // Set the author to the logged in user
+            testSuite.Author = userEmail;
+
             // Validate input
             if (testSuite == null || string.IsNullOrEmpty(testSuite.Title) || string.IsNullOrEmpty(testSuite.Author))
             {
                 return BadRequest("Invalid test suite data.");
             }
-
+           
             // Add the new test suite using the service
             var createdTestSuite = await _testSuiteService.AddNewTestSuite(testSuite);
 
-            // Return the created test suite with a 201 status code
+            // Return the created test suite
             return Ok(createdTestSuite);
         }
 
 
-        // Add new Test Case (No Test Suite association required,can accept association)
+        // Add new Test Case (No Test Suite association required, can accept association)
         [HttpPost("AddNewTestCase")]
         public async Task<ActionResult<TestCase>> AddNewTestCase([FromBody] TestCase testCase)
         {
@@ -71,10 +83,14 @@ namespace QAgentApi.Controllers
             {
                 return NotFound("User not authorized");
             }
-            // Check if author matches the user email
-            if (testCase == null || string.IsNullOrEmpty(testCase.Title) || testCase.Author != userEmail)
+
+            // Set the author to the logged in user
+            testCase.Author = userEmail;
+
+            // Validate input
+            if (testCase == null || string.IsNullOrEmpty(testCase.Title) || string.IsNullOrEmpty(testCase.Author))
             {
-                return BadRequest("Invalid test case data or unauthorized author.");
+                return BadRequest("Invalid test case data.");
             }
 
             // Add Test Case to database
@@ -83,8 +99,8 @@ namespace QAgentApi.Controllers
             return Ok(createdTestCase);
         }
 
-        // Add Test Case to existing Test Suite
-        //[HttpPost("AddTestCaseToSuite/{testSuiteId}")] - TODO
-
+        // TODO:
+        // Execute Test Case
+        
     }
 }
