@@ -6,9 +6,10 @@ namespace QAgentApi.Model
     public class TestStep
     {
         public TestStep() { }
-        public TestStep(string content, int index, int testCaseId)
+        public TestStep(string action, string expectedResult, int index, int testCaseId)
         {
-            Content = content;
+            Action = action;
+            ExpectedResult = expectedResult;
             Index = index;
             TestCaseId = testCaseId;
         }
@@ -18,7 +19,10 @@ namespace QAgentApi.Model
         public int StepId { get; set; }
         [Required]
         [MaxLength(255)]
-        public string Content { get; set; }
+        public string Action { get; set; }
+        [Required]
+        [MaxLength(255)]
+        public string ExpectedResult { get; set; }
         [Required]
         public int Index { get; set; } // represents step sequence
         [Required]
