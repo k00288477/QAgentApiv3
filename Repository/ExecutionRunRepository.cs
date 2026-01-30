@@ -16,9 +16,15 @@ namespace QAgentApi.Repository
             throw new NotImplementedException();
         }
 
-        public Task<ExecutionRun> InsertNewExecutionRun(ExecutionRun executionRun)
+        public async Task<ExecutionRun> InsertNewExecutionRun(ExecutionRun executionRun)
         {
-            throw new NotImplementedException();
+            if(executionRun == null)
+            {
+                throw new ArgumentNullException(nameof(executionRun));
+            }
+            await _context.ExecutionRuns.AddAsync(executionRun);
+            await _context.SaveChangesAsync();
+            return executionRun;
         }
     }
 }

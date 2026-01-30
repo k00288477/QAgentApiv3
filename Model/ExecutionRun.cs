@@ -27,6 +27,8 @@ namespace QAgentApi.Model
         public bool RecordingEnabled { get; set; }
         [JsonPropertyName("check_status_at")]
         public string? CheckStatusUrl { get; set; }
+        [JsonPropertyName("report_at")]
+        public string? ReportUrl { get; set; }
         public ExecutionReport? ExecutionReport { get; set; } // Navigation property to ExecutionReport
     }
 }

@@ -1,4 +1,5 @@
-﻿using QAgentApi.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using QAgentApi.Data;
 using QAgentApi.Model;
 using QAgentApi.Repository.Interfaces;
 
@@ -16,9 +17,11 @@ namespace QAgentApi.Repository
             throw new NotImplementedException();
         }
 
-        public Task<TestCase?> GetTestCaseById(int testCaseId)
+        public async Task<TestCase?> GetTestCaseById(int testCaseId)
         {
-            throw new NotImplementedException();
+            return await _context.TestCases
+                .Include(tc => tc.TestSteps)
+                .FirstOrDefaultAsync(tc => tc.TestCaseId == testCaseId);
         }
 
         public async Task<TestCase> InsertNewTestCase(TestCase testCase)
