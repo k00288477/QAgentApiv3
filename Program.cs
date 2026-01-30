@@ -123,6 +123,7 @@ builder.Services.AddScoped<IOrganisationRepository, OrganisationRepository>();
 builder.Services.AddScoped<ITestSuiteRepository, TestSuiteRepository>();
 builder.Services.AddScoped<ITestCaseRepository, TestCaseRepository>();
 builder.Services.AddScoped<ITestStepRepository, TestStepRepository>();
+builder.Services.AddScoped<ITestExecutionReportRepository, TestExecutionReportRepository>();
 
 var app = builder.Build();
 
