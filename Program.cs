@@ -116,6 +116,7 @@ builder.Services.AddScoped<OrganisationService>();
 builder.Services.AddScoped<TestSuiteService>();
 builder.Services.AddScoped<TestCaseService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<TestExecutionService>();
 
 // Repository Layer
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -123,6 +124,16 @@ builder.Services.AddScoped<IOrganisationRepository, OrganisationRepository>();
 builder.Services.AddScoped<ITestSuiteRepository, TestSuiteRepository>();
 builder.Services.AddScoped<ITestCaseRepository, TestCaseRepository>();
 builder.Services.AddScoped<ITestStepRepository, TestStepRepository>();
+builder.Services.AddScoped<ITestExecutionReportRepository, TestExecutionReportRepository>();
+builder.Services.AddScoped<IExecutionRunRepository, ExecutionRunRepository>();
+
+// HTTP client, see TestExecutionService for usage
+builder.Services.AddHttpClient<TestExecutionService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:800");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+    
+});
 
 var app = builder.Build();
 
