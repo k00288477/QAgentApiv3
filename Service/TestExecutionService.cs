@@ -11,21 +11,52 @@ This class also interacts with the data layer to store and retrieve test executi
  */
 
 using QAgentApi.Model;
+using QAgentApi.Repository.Interfaces;
 
 namespace QAgentApi.Service
 {
     public class TestExecutionService
     {
         private readonly HttpClient _httpClient;
-        public TestExecutionService(HttpClient httpClient)
+        private readonly ITestCaseRepository _testCaseRepository;
+        private readonly ITestExecutionReportRepository _executionReportRepository;
+        private readonly IExecutionRunRepository _executionRunRepository;
+        public TestExecutionService(HttpClient httpClient, ITestCaseRepository testCaseRepository, ITestExecutionReportRepository testExecutionReportRepository, IExecutionRunRepository executionRunRepository)
         {
             _httpClient = httpClient;
+            _testCaseRepository = testCaseRepository;
+            _executionReportRepository = testExecutionReportRepository;
+            _executionRunRepository = executionRunRepository;
         }
         // Execute Single Test
-        public Task<ExecutionReport> ExecuteSingleTestCaseAsync(int testCaseId)
+        public async Task<ExecutionRun> ExecuteSingleTestCaseAsync(int testCaseId)
         {
-            // Implementation for executing a single test case
-            return Task.FromResult(new ExecutionReport());
+            // Get the test case details from repository
+            TestCase testCase = await _testCaseRepository.GetTestCaseById(testCaseId);
+            if (testCase == null) 
+            {
+                throw new ArgumentException($"Test case with ID {testCaseId} not found.");
+            }
+            // Create request body, passing Test Steps
+            var requestBody = new
+            {
+                task = testCase.TestSteps,
+                generate_gif = true,
+                headless = true
+            };
+            // Send request to AI Engine to execute the test case
+            var response = await _httpClient.PostAsJsonAsync($"/run-task", requestBody);
+            if (response.IsSuccessStatusCode)
+            {
+                // Parse response to get execution run details
+                var executionRun = await response.Content.ReadFromJsonAsync<ExecutionRun>();
+
+                // Add to execution run repository
+                await _executionRunRepository.InsertNewExecutionRun(executionRun);
+                // Return execution run details, will be sent as is to client to be rendered
+                return executionRun;
+            }
+            throw new Exception($"Failed to execute test case. Status: { response.StatusCode }");
         }
 
         // Execute Multiple Tests
