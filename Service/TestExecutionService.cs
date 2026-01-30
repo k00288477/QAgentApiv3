@@ -12,6 +12,8 @@ This class also interacts with the data layer to store and retrieve test executi
 
 using QAgentApi.Model;
 using QAgentApi.Repository.Interfaces;
+using System.Text;
+using System.Text.Json;
 
 namespace QAgentApi.Service
 {
@@ -37,27 +39,66 @@ namespace QAgentApi.Service
             {
                 throw new ArgumentException($"Test case with ID {testCaseId} not found.");
             }
+            
+            // Test Steps must be formated as a single string
+            var task = FormatTestStepsAsTask(testCase.TestSteps);
             // Create request body, passing Test Steps
             var requestBody = new
             {
-                task = testCase.TestSteps,
+                task = task,
                 generate_gif = true,
                 headless = true
             };
             // Send request to AI Engine to execute the test case
             var response = await _httpClient.PostAsJsonAsync($"/run-task", requestBody);
+
             if (response.IsSuccessStatusCode)
             {
-                // Parse response to get execution run details
-                var executionRun = await response.Content.ReadFromJsonAsync<ExecutionRun>();
+                try
+                {   // Read response content
+                    var executionRun = await response.Content.ReadFromJsonAsync<ExecutionRun>();
 
-                // Add to execution run repository
-                await _executionRunRepository.InsertNewExecutionRun(executionRun);
-                // Return execution run details, will be sent as is to client to be rendered
-                return executionRun;
+                    if (executionRun == null)
+                    {
+                        throw new Exception($"Failed to deserialize execution run response. Raw response: {responseContent}");
+                    }
+
+                    // Save to Database
+                    await _executionRunRepository.InsertNewExecutionRun(executionRun)
+                    return executionRun;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error during processing: {ex.Message}");
+                    throw;
+                }
             }
-            throw new Exception($"Failed to execute test case. Status: { response.StatusCode }");
+
+            throw new Exception($"Failed to execute test case. Status: {response.StatusCode}");
         }
+
+        // Format Test Steps As Task
+        private object FormatTestStepsAsTask(List<TestStep> testSteps)
+        {
+            if(testSteps == null)
+            {
+                throw new ArgumentException("Test steps cannot be null.");
+            }
+
+            // Order test steps by Index
+            var orderedSteps = testSteps.OrderBy(step => step.Index).ToList();
+        
+            var taskBuilder = new StringBuilder();
+            foreach (var step in orderedSteps)
+            {
+                taskBuilder.AppendLine($"Step {step.Index}: {step.Action}");
+                taskBuilder.AppendLine($"Expected Result: {step.ExpectedResult}");
+                taskBuilder.AppendLine(); // Add a blank line between steps
+            }
+
+            return taskBuilder.ToString();
+        }
+
 
         // Execute Multiple Tests
         public Task<List<ExecutionReport>> ExecuteMultipleTestCasesAsync(List<TestCase> testCases)
