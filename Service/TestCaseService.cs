@@ -1,4 +1,5 @@
 ﻿
+using QAgentApi.Model;
 using QAgentApi.Repository.Interfaces;
 
 namespace QAgentApi.Service
@@ -16,5 +17,9 @@ namespace QAgentApi.Service
         }
 
         // METHODS
+        public async Task<TestCase?> GetTestCaseById(int testCaseId) 
+        {
+            return await _testCaseRepository.GetTestCaseById(testCaseId);
+        }
     }
 }

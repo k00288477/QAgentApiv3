@@ -60,11 +60,11 @@ namespace QAgentApi.Service
 
                     if (executionRun == null)
                     {
-                        throw new Exception($"Failed to deserialize execution run response. Raw response: {responseContent}");
+                        throw new Exception($"Failed to deserialize execution run response. Raw response: {response.Content}");
                     }
 
                     // Save to Database
-                    await _executionRunRepository.InsertNewExecutionRun(executionRun)
+                    await _executionRunRepository.InsertNewExecutionRun(executionRun);
                     return executionRun;
                 }
                 catch (Exception ex)

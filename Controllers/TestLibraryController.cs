@@ -12,9 +12,11 @@ namespace QAgentApi.Controllers
     public class TestLibraryController : ControllerBase
     {
         private readonly TestSuiteService _testSuiteService;
-        public TestLibraryController(TestSuiteService testSuiteService)
+        private readonly TestCaseService _testCaseService;
+        public TestLibraryController(TestSuiteService testSuiteService, TestCaseService testCaseService)
         {
             _testSuiteService = testSuiteService;
+            _testCaseService = testCaseService;
         }
 
         [HttpGet("TestNoAuth")]
@@ -63,7 +65,7 @@ namespace QAgentApi.Controllers
             {
                 return BadRequest("Invalid test suite data.");
             }
-           
+
             // Add the new test suite using the service
             var createdTestSuite = await _testSuiteService.AddNewTestSuite(testSuite);
 
@@ -99,8 +101,16 @@ namespace QAgentApi.Controllers
             return Ok(createdTestCase);
         }
 
-        // TODO:
-        // Execute Test Case
-        
+        [HttpGet("GetTestCase/{id}")]
+        public async Task<ActionResult<TestCase>> GetTestCase(int id)
+        {
+            var testCase = await _testCaseService.GetTestCaseById(id);
+            if (testCase == null)
+            {
+                return NotFound($"Test case with ID {id} not found.");
+            }
+            Console.WriteLine($"Retrieved Test Case: {testCase.Title}");    
+            return Ok(testCase);
+        }
     }
 }
