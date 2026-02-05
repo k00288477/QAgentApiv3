@@ -92,7 +92,8 @@ namespace QAgentApi.Controllers
             {
                 return BadRequest("Invalid test case data.");
             }
-
+            // set Date created
+            testCase.DateCreated = DateTime.UtcNow;
             // Add Test Case to database
             var createdTestCase = await _testSuiteService.AddNewTestCase(testCase);
 
