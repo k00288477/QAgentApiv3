@@ -35,11 +35,11 @@ namespace QAgentApi.Service
         {
             // Get the test case details from repository
             TestCase testCase = await _testCaseRepository.GetTestCaseById(testCaseId);
-            if (testCase == null) 
+            if (testCase == null)
             {
                 throw new ArgumentException($"Test case with ID {testCaseId} not found.");
             }
-            
+
             // Test Steps must be formated as a single string
             var task = FormatTestStepsAsTask(testCase.TestSteps);
             // Create request body, passing Test Steps
@@ -80,14 +80,14 @@ namespace QAgentApi.Service
         // Format Test Steps As Task
         private object FormatTestStepsAsTask(List<TestStep> testSteps)
         {
-            if(testSteps == null)
+            if (testSteps == null)
             {
                 throw new ArgumentException("Test steps cannot be null.");
             }
 
             // Order test steps by Index
             var orderedSteps = testSteps.OrderBy(step => step.Index).ToList();
-        
+
             var taskBuilder = new StringBuilder();
             foreach (var step in orderedSteps)
             {
@@ -108,10 +108,34 @@ namespace QAgentApi.Service
         }
 
         // Get Test Execution Status
-        public Task<Status> GetTestExecutionStatusAsync(int executionId)
+        public async Task<TestExecutionStatus> GetTestExecutionStatusAsync(int executionId)
         {
-            // Implementation for getting test execution status
-            return Task.FromResult(new Status());
+            // Implementation for retrieving the status of a test execution, will be called every 15 seconds by the frontend until the execution is complete
+            try
+            {
+                // Call AI Engine API to get staus of the test execution
+                var response = await _httpClient.GetAsync($"/task/{executionId}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Read response content
+                    var status = await response.Content.ReadFromJsonAsync<TestExecutionStatus>();
+                    if (status == null)
+                    {
+                        throw new Exception($"Failed to deserialize execution run response. Raw response: {response.Content}");
+                    }
+                    return status;
+                } else
+                {
+                    throw new Exception($"Failed to retrieve test execution status. Status: {response.StatusCode}");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during processing: {ex.Message}");
+                throw;
+            }
         }
 
         // Remove Test From Queue

@@ -7,7 +7,7 @@ namespace QAgentApi.Model
     {
         public ExecutionReport() { }
 
-        public ExecutionReport(TestCase testCase, DateTime executionDateTime, string executedBy, Status status, int executionRunId)
+        public ExecutionReport(TestCase testCase, DateTime executionDateTime, string executedBy, TestExecutionStatus status, int executionRunId)
         {
             TestCase = testCase;
             ExecutionDateTime = executionDateTime;
@@ -27,7 +27,7 @@ namespace QAgentApi.Model
         [MaxLength(255)]
         public string ExecutedBy { get; set; }
         [Required]
-        public Status Status { get; set; }
+        public TestExecutionStatus Status { get; set; }
         public List<Comment>? Comments { get; set; }
 
         public int ExecutionRunId { get; set; } // Foreign key to ExecutionRun. Report is generated after run has finished
