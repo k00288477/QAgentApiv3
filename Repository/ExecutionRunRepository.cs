@@ -1,4 +1,5 @@
-﻿using QAgentApi.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using QAgentApi.Data;
 using QAgentApi.Model;
 using QAgentApi.Repository.Interfaces;
 
@@ -14,6 +15,15 @@ namespace QAgentApi.Repository
         public Task<ExecutionRun?> GetExecutionRunById(int executionRunId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<ExecutionRun> GetExecutionRunByTaskId(string taskId)
+        {
+            if (taskId == null)
+            {
+                throw new ArgumentNullException("Task Id is null");
+            }
+            return await _context.ExecutionRuns.FirstOrDefaultAsync(er => er.TaskId == taskId);
         }
 
         public async Task<ExecutionRun> InsertNewExecutionRun(ExecutionRun executionRun)

@@ -61,10 +61,17 @@ namespace QAgentApi.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ExecutionReportId"));
 
-                    b.Property<string>("ExecutedBy")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<double?>("DurationSeconds")
+                        .HasColumnType("double");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("ExecutionDateTime")
                         .HasColumnType("datetime(6)");
@@ -72,11 +79,47 @@ namespace QAgentApi.Migrations
                     b.Property<int>("ExecutionRunId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<bool>("Failed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("Passed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("RecordingAvailable")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("RecordingBase64")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RecordingUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("ResultJson")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("TaskDescription")
+                        .HasMaxLength(2000)
+                        .HasColumnType("varchar(2000)");
+
+                    b.Property<string>("TaskId")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<int>("TestCaseId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("ExecutionReportId");
 
@@ -100,6 +143,9 @@ namespace QAgentApi.Migrations
                         .HasColumnType("longtext")
                         .HasAnnotation("Relational:JsonPropertyName", "check_status_at");
 
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Message")
                         .HasColumnType("longtext")
                         .HasAnnotation("Relational:JsonPropertyName", "message");
@@ -113,8 +159,7 @@ namespace QAgentApi.Migrations
                         .HasAnnotation("Relational:JsonPropertyName", "report_at");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime(6)")
-                        .HasAnnotation("Relational:JsonPropertyName", "startTime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Status")
                         .HasColumnType("longtext")
@@ -124,11 +169,16 @@ namespace QAgentApi.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasAnnotation("Relational:JsonPropertyName", "success");
 
-                    b.Property<string>("Task_id")
+                    b.Property<string>("TaskId")
                         .HasColumnType("longtext")
                         .HasAnnotation("Relational:JsonPropertyName", "task_id");
 
+                    b.Property<int>("TestCaseId")
+                        .HasColumnType("int");
+
                     b.HasKey("ExecutionRunId");
+
+                    b.HasIndex("TestCaseId");
 
                     b.ToTable("ExecutionRuns");
                 });
@@ -322,6 +372,17 @@ namespace QAgentApi.Migrations
                         .IsRequired();
 
                     b.Navigation("ExecutionRun");
+
+                    b.Navigation("TestCase");
+                });
+
+            modelBuilder.Entity("QAgentApi.Model.ExecutionRun", b =>
+                {
+                    b.HasOne("QAgentApi.Model.TestCase", "TestCase")
+                        .WithMany()
+                        .HasForeignKey("TestCaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("TestCase");
                 });

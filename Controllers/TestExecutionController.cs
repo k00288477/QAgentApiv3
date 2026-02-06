@@ -35,8 +35,8 @@ namespace QAgentApi.Controllers
         // Execute Multiple Test Cases
 
         // Check Test Execution Status
-        [HttpGet("CheckExecutionStatus")]
-        public async Task<ActionResult> CheckExecutionStatus(int executionRunId)
+        [HttpGet("CheckExecutionStatus/{executionRunId}")]
+        public async Task<ActionResult> CheckExecutionStatus(string executionRunId)
         {
             try
             {   // Call service to check the status of the execution run
@@ -67,6 +67,27 @@ namespace QAgentApi.Controllers
         }
 
         // Get Test Execution Report
+        [HttpGet("GetTestReport/{executionRunId}")]
+        public async Task<ActionResult> GetTestReport(string executionRunId)
+        {
+            try
+            {   // Call service to get the test execution report
+                var report = await _testExecutionService.GetTestExecutionReportAsync(executionRunId);
+                if (report == null)
+                {
+                    return NotFound($"Execution run with ID {executionRunId} not found.");
+                }
+                return Ok(report);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
         // Cancel Test Execution
 

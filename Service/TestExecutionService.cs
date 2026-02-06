@@ -63,6 +63,7 @@ namespace QAgentApi.Service
                         throw new Exception($"Failed to deserialize execution run response. Raw response: {response.Content}");
                     }
 
+                    executionRun.TestCaseId = testCaseId;
                     // Save to Database
                     await _executionRunRepository.InsertNewExecutionRun(executionRun);
                     return executionRun;
@@ -108,7 +109,7 @@ namespace QAgentApi.Service
         }
 
         // Get Test Execution Status
-        public async Task<TestExecutionStatus> GetTestExecutionStatusAsync(int executionId)
+        public async Task<TestExecutionStatus> GetTestExecutionStatusAsync(string executionId)
         {
             // Implementation for retrieving the status of a test execution, will be called every 15 seconds by the frontend until the execution is complete
             try
@@ -125,7 +126,8 @@ namespace QAgentApi.Service
                         throw new Exception($"Failed to deserialize execution run response. Raw response: {response.Content}");
                     }
                     return status;
-                } else
+                }
+                else
                 {
                     throw new Exception($"Failed to retrieve test execution status. Status: {response.StatusCode}");
 
@@ -152,6 +154,83 @@ namespace QAgentApi.Service
             return Task.FromResult(new List<TestCase>());
         }
 
+        // Get Test Execution Report
+        public async Task<ExecutionReport> GetTestExecutionReportAsync(string taskId)
+        {
+            // Implementation for retrieving the test execution report after execution is complete
+            try
+            {
+                // Get the execution report from the AI Engine
+                var apiReportResponse = await _httpClient.GetAsync($"/task/{taskId}/report");
 
+                // Check if failed to retrieve report
+                if (!apiReportResponse.IsSuccessStatusCode)
+                {
+                    throw new Exception($"Failed to retrieve execution report. {apiReportResponse.StatusCode}");
+                }
+
+                // Deserialize the API response to create a Test Report object
+                var apiReport = await apiReportResponse.Content.ReadFromJsonAsync<TestReportResponse>();
+
+                // Check if null
+                if(apiReport == null)
+                {
+                    throw new Exception($"Failed to deserialize execution report response. Raw response: {apiReportResponse.Content}");
+                }
+
+                var reportData = apiReport.TestReport;
+
+                // Get the ExecutionRun from the database
+                var executionRun = await _executionRunRepository.GetExecutionRunByTaskId(taskId);
+                if (executionRun == null)
+                {
+                    throw new Exception($"Execution run with ID {taskId} not found in database."); 
+                }
+
+                // create the execution report 
+                var executionReport = new ExecutionReport
+                {
+                    ExecutionRunId = executionRun.ExecutionRunId,
+                    TestCaseId = executionRun.TestCaseId,
+                    ExecutionDateTime = DateTime.UtcNow,
+                    TaskId = reportData.TaskId, // From AI Engine
+                    TaskDescription = reportData.TaskDescription,
+                    Status = reportData.Status,
+                    Passed = reportData.Passed,
+                    Failed = reportData.Failed,
+                    StartTime = ParseDateTime(reportData.StartTime),
+                    EndTime = ParseDateTime(reportData.EndTime),
+                    DurationSeconds = reportData.DurationSeconds,
+                    ErrorMessage = reportData.ErrorMessage,
+                    ResultJson = reportData.Result,
+                    RecordingAvailable = reportData.RecordingAvailable,
+                    RecordingUrl = reportData.RecordingUrl,
+                    RecordingBase64 = reportData.RecordingBase64
+                };
+
+                // Save the execution report to the database
+                await _executionReportRepository.InsertNewExecutionReport(executionReport);
+
+                // return to the controller
+                return executionReport;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during processing: {ex.Message}");
+                throw;
+            }
+        }
+
+        private DateTime? ParseDateTime(string? dateTimeString)
+        {
+            if (string.IsNullOrEmpty(dateTimeString))
+                return null;
+
+            if (DateTime.TryParse(dateTimeString, out var result))
+                return result;
+
+            return null;
+        }
     }
 }

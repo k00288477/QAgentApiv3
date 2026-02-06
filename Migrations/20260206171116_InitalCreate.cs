@@ -7,28 +7,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace QAgentApi.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class InitalCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "ExecutionRuns",
-                columns: table => new
-                {
-                    ExecutionRunId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    StartTime = table.Column<TimeOnly>(type: "time(6)", nullable: false),
-                    EndTime = table.Column<TimeOnly>(type: "time(6)", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExecutionRuns", x => x.ExecutionRunId);
-                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -137,29 +121,32 @@ namespace QAgentApi.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ExecutionReports",
+                name: "ExecutionRuns",
                 columns: table => new
                 {
-                    ExecutionReportId = table.Column<int>(type: "int", nullable: false)
+                    ExecutionRunId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     TestCaseId = table.Column<int>(type: "int", nullable: false),
-                    ExecutionDateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ExecutedBy = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                    Success = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Message = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    ExecutionRunId = table.Column<int>(type: "int", nullable: false)
+                    TaskId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Status = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RecordingEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    CheckStatusUrl = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ReportUrl = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    StartTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExecutionReports", x => x.ExecutionReportId);
+                    table.PrimaryKey("PK_ExecutionRuns", x => x.ExecutionRunId);
                     table.ForeignKey(
-                        name: "FK_ExecutionReports_ExecutionRuns_ExecutionRunId",
-                        column: x => x.ExecutionRunId,
-                        principalTable: "ExecutionRuns",
-                        principalColumn: "ExecutionRunId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ExecutionReports_TestCases_TestCaseId",
+                        name: "FK_ExecutionRuns_TestCases_TestCaseId",
                         column: x => x.TestCaseId,
                         principalTable: "TestCases",
                         principalColumn: "TestCaseId",
@@ -173,7 +160,9 @@ namespace QAgentApi.Migrations
                 {
                     StepId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Content = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                    Action = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ExpectedResult = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Index = table.Column<int>(type: "int", nullable: false),
                     TestCaseId = table.Column<int>(type: "int", nullable: false)
@@ -183,6 +172,56 @@ namespace QAgentApi.Migrations
                     table.PrimaryKey("PK_TestSteps", x => x.StepId);
                     table.ForeignKey(
                         name: "FK_TestSteps_TestCases_TestCaseId",
+                        column: x => x.TestCaseId,
+                        principalTable: "TestCases",
+                        principalColumn: "TestCaseId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ExecutionReports",
+                columns: table => new
+                {
+                    ExecutionReportId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ExecutionRunId = table.Column<int>(type: "int", nullable: false),
+                    TestCaseId = table.Column<int>(type: "int", nullable: false),
+                    ExecutionDateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    TaskId = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TaskDescription = table.Column<string>(type: "varchar(2000)", maxLength: 2000, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Status = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Passed = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Failed = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    EndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DurationSeconds = table.Column<double>(type: "double", nullable: true),
+                    ErrorMessage = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ResultJson = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RecordingAvailable = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    RecordingUrl = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RecordingBase64 = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExecutionReports", x => x.ExecutionReportId);
+                    table.ForeignKey(
+                        name: "FK_ExecutionReports_ExecutionRuns_ExecutionRunId",
+                        column: x => x.ExecutionRunId,
+                        principalTable: "ExecutionRuns",
+                        principalColumn: "ExecutionRunId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExecutionReports_TestCases_TestCaseId",
                         column: x => x.TestCaseId,
                         principalTable: "TestCases",
                         principalColumn: "TestCaseId",
@@ -229,6 +268,11 @@ namespace QAgentApi.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ExecutionReports_TestCaseId",
                 table: "ExecutionReports",
+                column: "TestCaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExecutionRuns_TestCaseId",
+                table: "ExecutionRuns",
                 column: "TestCaseId");
 
             migrationBuilder.CreateIndex(

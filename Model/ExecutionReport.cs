@@ -7,32 +7,70 @@ namespace QAgentApi.Model
     {
         public ExecutionReport() { }
 
-        public ExecutionReport(TestCase testCase, DateTime executionDateTime, string executedBy, TestExecutionStatus status, int executionRunId)
-        {
-            TestCase = testCase;
-            ExecutionDateTime = executionDateTime;
-            ExecutedBy = executedBy;
-            Status = status;
-            ExecutionRunId = executionRunId;
-        }
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ExecutionReportId { get; set; }
+
+        // Foreign key to ExecutionRun
         [Required]
-        public TestCase TestCase { get; set; }
+        public int ExecutionRunId { get; set; }
+
+        [ForeignKey(nameof(ExecutionRunId))]
+        public ExecutionRun? ExecutionRun { get; set; }
+
+        // Foreign key to TestCase
+        [Required]
+        public int TestCaseId { get; set; }
+
+        [ForeignKey(nameof(TestCaseId))]
+        public TestCase? TestCase { get; set; }
+
+        // Execution metadata
         [Required]
         public DateTime ExecutionDateTime { get; set; }
+        // AI API Task Information
         [Required]
-        [MaxLength(255)]
-        public string ExecutedBy { get; set; }
+        [MaxLength(500)]
+        public string TaskId { get; set; } // The AI API task_id
+
+        [MaxLength(2000)]
+        public string? TaskDescription { get; set; }
+
+        // Execution results
         [Required]
-        public TestExecutionStatus Status { get; set; }
+        [MaxLength(50)]
+        public string Status { get; set; }
+
+        public bool Passed { get; set; }
+
+        public bool Failed { get; set; }
+
+        public DateTime? StartTime { get; set; }
+
+        public DateTime? EndTime { get; set; }
+
+        public double? DurationSeconds { get; set; }
+
+        // Error handling
+        public string? ErrorMessage { get; set; }
+
+        // Result data (stored as JSON)
+        [Column(TypeName = "longtext")]
+        public string? ResultJson { get; set; }
+
+        // Recording information
+        public bool RecordingAvailable { get; set; }
+
+        [MaxLength(1000)]
+        public string? RecordingUrl { get; set; }
+
+        [Column(TypeName = "longtext")]
+        public string? RecordingBase64 { get; set; }
+
         public List<Comment>? Comments { get; set; }
 
-        public int ExecutionRunId { get; set; } // Foreign key to ExecutionRun. Report is generated after run has finished
-        [ForeignKey(nameof(ExecutionRunId))]
-        public ExecutionRun ExecutionRun { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public DateTime? UpdatedAt { get; set; }
     }
 }
