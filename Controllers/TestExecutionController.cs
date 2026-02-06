@@ -31,5 +31,66 @@ namespace QAgentApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        // Execute Multiple Test Cases
+
+        // Check Test Execution Status
+        [HttpGet("CheckExecutionStatus/{executionRunId}")]
+        public async Task<ActionResult> CheckExecutionStatus(string executionRunId)
+        {
+            try
+            {   // Call service to check the status of the execution run
+                var status = await _testExecutionService.GetTestExecutionStatusAsync(executionRunId);
+                if (status == null)
+                {
+                    return NotFound($"Execution run with ID {executionRunId} not found.");
+                }
+                // Check if API returned an error status 
+                if (!status.Success)
+                {
+                    return BadRequest($"Error checking execution status: {status.Error}");
+                }
+                return Ok(status);
+            }
+            catch (HttpRequestException ex) 
+            {
+                return BadRequest($"Error communicating with test execution service: {ex.Message}");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Get Test Execution Report
+        [HttpGet("GetTestReport/{executionRunId}")]
+        public async Task<ActionResult> GetTestReport(string executionRunId)
+        {
+            try
+            {   // Call service to get the test execution report
+                var report = await _testExecutionService.GetTestExecutionReportAsync(executionRunId);
+                if (report == null)
+                {
+                    return NotFound($"Execution run with ID {executionRunId} not found.");
+                }
+                return Ok(report);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Cancel Test Execution
+
+
     }
 }
