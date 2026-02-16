@@ -43,6 +43,7 @@ namespace QAgentApi.Model
 
 
         // Timestamps
+        [JsonPropertyName("startTime")]
         public DateTime StartTime { get; set; } = DateTime.UtcNow;
         public DateTime? EndTime { get; set; }
         public ExecutionReport? ExecutionReport { get; set; }
