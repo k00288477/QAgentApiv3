@@ -33,6 +33,7 @@ namespace QAgentApi.Service
         // Execute Single Test
         public async Task<ExecutionRun> ExecuteSingleTestCaseAsync(int testCaseId)
         {
+            try {
             // Get the test case details from repository
             TestCase testCase = await _testCaseRepository.GetTestCaseById(testCaseId);
             if (testCase == null)
@@ -71,11 +72,19 @@ namespace QAgentApi.Service
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error during processing: {ex.Message}");
-                    throw;
+                    Console.WriteLine($"Inner Exception: {ex.InnerException?.Message}");
+                    Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                    throw new Exception($"Database error: {ex.InnerException?.Message ?? ex.Message}", ex);
                 }
             }
 
             throw new Exception($"Failed to execute test case. Status: {response.StatusCode}");
+        }
+            catch (Exception ex)
+    {
+        Console.WriteLine($"Full error: {ex}");
+        throw;
+    }
         }
 
         // Format Test Steps As Task
