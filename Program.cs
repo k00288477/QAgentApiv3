@@ -130,7 +130,7 @@ builder.Services.AddScoped<IExecutionRunRepository, ExecutionRunRepository>();
 // HTTP client, see TestExecutionService for usage
 builder.Services.AddHttpClient<TestExecutionService>(client =>
 {
-    client.BaseAddress = new Uri("http://localhost:8000");
+    client.BaseAddress = new Uri("http://qagent-ai-eng.railway.internal");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
     
 });
