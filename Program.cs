@@ -130,6 +130,7 @@ builder.Services.AddScoped<IExecutionRunRepository, ExecutionRunRepository>();
 // HTTP client, see TestExecutionService for usage
 builder.Services.AddHttpClient<TestExecutionService>(client =>
 {
+    var port = Environment.GetEnvironmentVariable("PYTHON_API_PORT") ?? "8000";
     client.BaseAddress = new Uri("http://qagent-ai-eng.railway.internal");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
     
