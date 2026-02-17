@@ -144,8 +144,7 @@ namespace QAgentApi.Service
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error during processing: {ex.Message}");
-                throw;
+                throw new Exception($"Error during processing: {ex.Message}");
             }
         }
 
@@ -164,7 +163,22 @@ namespace QAgentApi.Service
         }
 
         // Get Test Execution Report
-        public async Task<ExecutionReport> GetTestExecutionReportAsync(string taskId)
+        public async Task<ExecutionReport> GetExecutionReportFromDatabaseAsync(int executionRunId)
+        {
+            try {                 // Get the ExecutionRun from the database
+                var executionReport = await _executionReportRepository.GetExecutionRunByExecutionRunId(executionRunId);
+                if (executionReport == null)
+                {
+                    throw new Exception($"Execution run with ID {executionRunId} not found in database.");
+                }
+                return executionReport;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error during processing: {ex.Message}");
+            }
+        }
+        public async Task<ExecutionReport> GetTestExecutionReportAndSaveToDatabaseAsync(string taskId)
         {
             // Implementation for retrieving the test execution report after execution is complete
             try
@@ -218,16 +232,11 @@ namespace QAgentApi.Service
                 };
 
                 // Save the execution report to the database
-                await _executionReportRepository.InsertNewExecutionReport(executionReport);
-
-                // return to the controller
                 return executionReport;
-
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error during processing: {ex.Message}");
-                throw;
+                throw new Exception($"Error during processing: {ex.Message}");
             }
         }
 

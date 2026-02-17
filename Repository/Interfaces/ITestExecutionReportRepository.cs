@@ -5,6 +5,7 @@ namespace QAgentApi.Repository.Interfaces
     public interface ITestExecutionReportRepository
     {
         Task<ExecutionReport?> GetExecutionReportById(int executionReportId);
+        Task<ExecutionReport?> GetExecutionRunByExecutionRunId(int executionRunId);
         Task<ExecutionReport> InsertNewExecutionReport(ExecutionReport executionReport);
         Task<ExecutionReport> InsertNewCommentOnExecutionReport(Comment comment);
         Task<ExecutionReport> UpdateCommentById(Comment comment);
