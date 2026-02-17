@@ -11,7 +11,7 @@ namespace QAgentApi.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "TaskId",
+                name: "Task_Id",
                 table: "ExecutionRuns",
                 newName: "Task_id");
         }
