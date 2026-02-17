@@ -26,6 +26,7 @@ namespace QAgentApi.Model
         public string? Message { get; set; }
 
         [JsonPropertyName("task_id")]
+        [Column("Task_id")]
         public string? TaskId { get; set; }
 
         [JsonPropertyName("status")]
