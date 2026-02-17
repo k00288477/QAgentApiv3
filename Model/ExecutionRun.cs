@@ -12,6 +12,8 @@ namespace QAgentApi.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ExecutionRunId { get; set; }
         [Required]
+
+        [Column("TestCaseId")]
         public int TestCaseId { get; set; }
         [ForeignKey(nameof(TestCaseId))]
         public TestCase TestCase { get; set; }
