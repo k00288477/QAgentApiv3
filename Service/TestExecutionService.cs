@@ -232,6 +232,7 @@ namespace QAgentApi.Service
                 };
 
                 // Save the execution report to the database
+                await _executionReportRepository.InsertNewExecutionReport(executionReport);
                 return executionReport;
             }
             catch (Exception ex)
