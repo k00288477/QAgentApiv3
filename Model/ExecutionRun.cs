@@ -20,9 +20,11 @@ namespace QAgentApi.Model
 
         // AI Engine Response fields
         [JsonPropertyName("success")]
+        [Column("Success")]
         public bool Success { get; set; }
 
         [JsonPropertyName("message")]
+        [Column("Message")]
         public string? Message { get; set; }
 
         [JsonPropertyName("task_id")]
@@ -30,22 +32,28 @@ namespace QAgentApi.Model
         public string? TaskId { get; set; }
 
         [JsonPropertyName("status")]
+        [Column("Status")]
         public string? Status { get; set; }
 
         [JsonPropertyName("recording_enabled")]
+        [Column("RecordingEnabled")]
         public bool RecordingEnabled { get; set; }
 
         [JsonPropertyName("check_status_at")]
+        [Column("CheckStatusUrl")]
         public string? CheckStatusUrl { get; set; }
 
         [JsonPropertyName("report_at")]
+        [Column("ReportUrl")]
         public string? ReportUrl { get; set; }
 
 
 
         // Timestamps
         [JsonPropertyName("startTime")]
+        [Column("StartTime")]
         public DateTime StartTime { get; set; } = DateTime.UtcNow;
+        [Column("EndTime")]
         public DateTime? EndTime { get; set; }
         public ExecutionReport? ExecutionReport { get; set; }
     }
