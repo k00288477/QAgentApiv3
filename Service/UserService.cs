@@ -22,7 +22,7 @@ namespace QAgentApi.Service
         }
 
         // Get User by Email
-        public async Task<User?> GetUserByEmail(string email)
+        public virtual async Task<User?> GetUserByEmail(string email)
         {
             return await _userRepo.GetUserByEmail(email);
         }

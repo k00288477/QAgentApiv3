@@ -1,4 +1,4 @@
 <Solution>
+  <Project Path="../QAgent.Tests/QAgent.Tests.csproj" Id="77a962b7-b4c5-4a23-9404-aaeeccf0f646" />
   <Project Path="QAgentApi.csproj" />
-  <Project Path="QAgentApi.Test/QAgentApi.Test.csproj" />
 </Solution>
