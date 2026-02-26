@@ -66,29 +66,6 @@ namespace QAgentApi.Controllers
             }
         }
 
-        // Get Test Execution Report QAgent-AIEngine and save to database
-        [HttpGet("GetTestReport/{taskId}")]
-        public async Task<ActionResult> GetTestReport(string taskId)
-        {
-            try
-            {   // Call service to get the test execution report amd save it to the database
-                var executionReport = await _testExecutionService.GetTestExecutionReportAndSaveToDatabaseAsync(taskId);
-                if (executionReport == null)
-                {
-                    return NotFound($"Execution report for task ID {taskId} not found.");
-                }
-                return Ok(executionReport);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
         // Get Test Execution Report from database by execution run ID  
         [HttpGet("GetTestReportFromDB/{executionRunId}")]
         public async Task<ActionResult> GetTestReportFromDB(int executionRunId)

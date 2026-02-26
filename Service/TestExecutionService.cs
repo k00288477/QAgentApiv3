@@ -134,6 +134,14 @@ namespace QAgentApi.Service
                     {
                         throw new Exception($"Failed to deserialize execution run response. Raw response: {response.Content}");
                     }
+
+                    if(status.Status == "completed" && status.Result != null)
+                    {
+                        // get the Test Report and save to the database
+                        await this.GetTestExecutionReportAndSaveToDatabaseAsync(executionId);
+
+                    }
+
                     return status;
                 }
                 else
@@ -165,7 +173,7 @@ namespace QAgentApi.Service
         // Get Test Execution Report
         public async Task<ExecutionReport> GetExecutionReportFromDatabaseAsync(int executionRunId)
         {
-            try {                 // Get the ExecutionRun from the database
+            try {                 
                 var executionReport = await _executionReportRepository.GetExecutionRunByExecutionRunId(executionRunId);
                 if (executionReport == null)
                 {
