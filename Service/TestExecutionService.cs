@@ -174,7 +174,7 @@ namespace QAgentApi.Service
         public async Task<ExecutionReport> GetExecutionReportFromDatabaseAsync(int executionRunId)
         {
             try {                 
-                var executionReport = await _executionReportRepository.GetExecutionRunByExecutionRunId(executionRunId);
+                var executionReport = await _executionReportRepository.GetExecutionReportByExecutionRunId(executionRunId);
                 if (executionReport == null)
                 {
                     throw new Exception($"Execution run with ID {executionRunId} not found in database.");
