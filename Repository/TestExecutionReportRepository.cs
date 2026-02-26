@@ -74,7 +74,7 @@ namespace QAgentApi.Repository
             return null;
         }
 
-        public async Task<ExecutionReport> GetExecutionRunByExecutionRunId(int executionRunId) 
+        public async Task<ExecutionReport> GetExecutionReportByExecutionRunId(int executionRunId) 
         {
             return await _context.ExecutionReports
                 .FirstOrDefaultAsync(er => er.ExecutionRunId == executionRunId);
