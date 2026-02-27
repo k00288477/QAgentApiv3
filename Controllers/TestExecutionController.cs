@@ -8,9 +8,14 @@ namespace QAgentApi.Controllers
     public class TestExecutionController : Controller
     {
         private readonly TestExecutionService _testExecutionService;
-        public TestExecutionController(TestExecutionService testExecutionService)
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        public TestExecutionController(
+            TestExecutionService testExecutionService,
+            IServiceScopeFactory serviceScopeFactory
+            )
         {
             _testExecutionService = testExecutionService;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         // Execute Single Test Case
@@ -42,7 +47,12 @@ namespace QAgentApi.Controllers
                 var suiteRun = await _testExecutionService.CreateSuiteRunAsync(testSuiteId);
 
                 // run in background without awaiting
-                _ = Task.Run(() => _testExecutionService.ExecuteMultipleTestCasesAsync(suiteRun.SuiteRunId));
+                _ = Task.Run(async () =>
+                {
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    var executionService = scope.ServiceProvider.GetRequiredService<TestExecutionService>();
+                    await executionService.ExecuteMultipleTestCasesAsync(suiteRun.SuiteRunId);
+                });
 
                 // Return the SuiteRunId for polling
                 return Ok(suiteRun.SuiteRunId);
