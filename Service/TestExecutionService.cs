@@ -149,7 +149,7 @@ namespace QAgentApi.Service
                     while (true)
                     {
                         status = await this.PollExecutionStatusAsync(executionRun.TaskId);
-                        if (status.Status == "completed")
+                        if (status.Status == "completed" || status.Status == "failed")
                             break;
 
                         await Task.Delay(15000);
