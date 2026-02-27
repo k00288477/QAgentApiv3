@@ -12,6 +12,18 @@ namespace QAgentApi.Repository
         {
             _context = context;
         }
+
+        public async Task<List<TestSuiteRun>> GetAllSuiteRunsByTestSuiteAuthor(string author)
+        {
+            return await _context.TestSuiteRuns
+                .Include(sr => sr.TestSuite)
+                .Include(sr => sr.ExecutionReports)
+                    .ThenInclude(er => er.TestCase)
+                .Where(sr => sr.TestSuite.Author == author)
+                .OrderByDescending(sr => sr.StartedAt)
+                .ToListAsync();
+        }
+
         public async Task<TestSuiteRun?> GetSuiteById(int suiteRunId)
         {
             return await _context.TestSuiteRuns
