@@ -23,12 +23,23 @@ namespace QAgentApi.Service
         private readonly ITestCaseRepository _testCaseRepository;
         private readonly ITestExecutionReportRepository _executionReportRepository;
         private readonly IExecutionRunRepository _executionRunRepository;
-        public TestExecutionService(HttpClient httpClient, ITestCaseRepository testCaseRepository, ITestExecutionReportRepository testExecutionReportRepository, IExecutionRunRepository executionRunRepository)
+        private readonly ITestSuiteRunRepository _testSuiteRunRepository;
+        private readonly ITestSuiteRepository _testSuiteRepository;
+        public TestExecutionService(
+            HttpClient httpClient, 
+            ITestCaseRepository testCaseRepository, 
+            ITestExecutionReportRepository testExecutionReportRepository, 
+            IExecutionRunRepository executionRunRepository,
+            ITestSuiteRunRepository testSuiteRunRepository,
+            ITestSuiteRepository testSuiteRepository
+            )
         {
             _httpClient = httpClient;
             _testCaseRepository = testCaseRepository;
             _executionReportRepository = testExecutionReportRepository;
             _executionRunRepository = executionRunRepository;
+            _testSuiteRunRepository = testSuiteRunRepository;
+            _testSuiteRepository = testSuiteRepository;
         }
         // Execute Single Test
         public async Task<ExecutionRun> ExecuteSingleTestCaseAsync(int testCaseId)
@@ -111,10 +122,62 @@ namespace QAgentApi.Service
 
 
         // Execute Multiple Tests
-        public Task<List<ExecutionReport>> ExecuteMultipleTestCasesAsync(List<TestCase> testCases)
+        public async Task ExecuteMultipleTestCasesAsync(int suiteRunId)
         {
-            // Implementation for executing multiple test cases
-            return Task.FromResult(new List<ExecutionReport>());
+            try
+            {
+                // Fetch the already created SuiteRun
+                TestSuiteRun suiteRun = await _testSuiteRunRepository.GetSuiteById(suiteRunId);
+                if (suiteRun == null)
+                    throw new ArgumentException($"Suite run with ID {suiteRunId} not found.");
+
+                // Fetch the test suite with test cases and steps
+                TestSuite testSuite = await _testSuiteRepository.GetTestSuiteById(suiteRun.TestSuiteId);
+                if (testSuite == null)
+                    throw new ArgumentException($"Test suite with ID {suiteRun.TestSuiteId} not found.");
+
+                var executionReports = new List<ExecutionReport>();
+
+                // Loop through each test case and execute
+                foreach (var testCase in testSuite.TestCases)
+                {
+                    // Send to AI engine
+                    var executionRun = await this.ExecuteSingleTestCaseAsync(testCase.TestCaseId);
+
+                    // Poll until complete
+                    TestExecutionStatus status = null;
+                    while (true)
+                    {
+                        status = await this.PollExecutionStatusAsync(executionRun.TaskId);
+                        if (status.Status == "completed")
+                            break;
+
+                        await Task.Delay(15000);
+                    }
+
+                    // Save report
+                    var executionReport = await this.GetTestExecutionReportAndSaveToDatabaseAsync(executionRun.TaskId);
+
+                    // Attach SuiteRunId
+                    executionReport.SuiteRunId = suiteRun.SuiteRunId;
+                    await _executionReportRepository.UpdateExecutionReport(executionReport);
+
+                    executionReports.Add(executionReport);
+
+                    // Update progress
+                    suiteRun.CompletedTests++;
+                    await _testSuiteRunRepository.UpdateSuiteRun(suiteRun);
+                }
+
+                // All tests complete - set final status
+                suiteRun.CompletedAt = DateTime.UtcNow;
+                suiteRun.Status = executionReports.All(r => r.Passed) ? "passed" : "failed";
+                await _testSuiteRunRepository.UpdateSuiteRun(suiteRun);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error during multiple test case execution: " + ex.Message, ex);
+            }
         }
 
         // Get Test Execution Status
@@ -247,6 +310,46 @@ namespace QAgentApi.Service
             {
                 throw new Exception($"Error during processing: {ex.Message}");
             }
+        }
+
+        private async Task<TestExecutionStatus> PollExecutionStatusAsync(string executionId)
+        {
+            var response = await _httpClient.GetAsync($"/task/{executionId}");
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Failed to retrieve test execution status. Status: {response.StatusCode}");
+
+            var status = await response.Content.ReadFromJsonAsync<TestExecutionStatus>();
+            if (status == null)
+                throw new Exception("Failed to deserialize execution status response.");
+
+            return status;
+        }
+
+        public async Task<TestSuiteRun> CreateSuiteRunAsync(int testSuiteId)
+        {
+            TestSuite testSuite = await _testSuiteRepository.GetTestSuiteById(testSuiteId);
+            if (testSuite == null)
+                throw new ArgumentException($"Test suite with ID {testSuiteId} not found.");
+
+            var suiteRun = new TestSuiteRun
+            {
+                TestSuiteId = testSuiteId,
+                Status = "running",
+                TotalTests = testSuite.TestCases?.Count ?? 0,
+                CompletedTests = 0,
+                StartedAt = DateTime.UtcNow
+            };
+
+            await _testSuiteRunRepository.InsertNewTestSuiteRun(suiteRun);
+            return suiteRun;
+        }
+        public async Task<TestSuiteRun> GetSuiteRunProgressAsync(int suiteRunId)
+        {
+            var suiteRun = await _testSuiteRunRepository.GetSuiteById(suiteRunId);
+            if (suiteRun == null)
+                throw new Exception($"Suite run with ID {suiteRunId} not found.");
+
+            return suiteRun;
         }
 
         private DateTime? ParseDateTime(string? dateTimeString)

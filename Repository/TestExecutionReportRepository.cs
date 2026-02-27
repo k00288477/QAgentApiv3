@@ -79,5 +79,19 @@ namespace QAgentApi.Repository
             return await _context.ExecutionReports
                 .FirstOrDefaultAsync(er => er.ExecutionRunId == executionRunId);
         }
+
+        public async Task<ExecutionReport> UpdateExecutionReport(ExecutionReport executionReport)
+        {
+            if (executionReport == null)
+            {
+                throw new ArgumentNullException(nameof(executionReport));
+            }
+
+            _context.ExecutionReports.Update(executionReport);
+            await _context.SaveChangesAsync();
+
+            return await _context.ExecutionReports
+                .FirstOrDefaultAsync(er => er.ExecutionReportId == executionReport.ExecutionReportId);
+        }
     }
 }

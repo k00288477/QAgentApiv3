@@ -29,7 +29,8 @@ namespace QAgentApi.Repository
         {
             return await _context.TestSuites
                 .Where(ts => ts.TestSuiteId == testSuiteId)
-                .Include(ts => ts.TestCases)
+                .Include(ts => ts.TestCases!)
+                .ThenInclude(tc => tc.TestSteps)
                 .FirstOrDefaultAsync();
         }
 

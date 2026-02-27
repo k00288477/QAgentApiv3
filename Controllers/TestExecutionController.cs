@@ -32,7 +32,48 @@ namespace QAgentApi.Controllers
             }
         }
 
-        // Execute Multiple Test Cases
+        // Execute Test Suite, Multiple Test Cases
+        [HttpPost("ExecuteTestSuite/{testSuiteId}")]
+        public async Task<IActionResult> ExecuteTestSuite(int testSuiteId)
+        {
+            try
+            {
+                // Create the SuiteRun record, return its ID 
+                var suiteRun = await _testExecutionService.CreateSuiteRunAsync(testSuiteId);
+
+                // run in background without awaiting
+                _ = Task.Run(() => _testExecutionService.ExecuteMultipleTestCasesAsync(suiteRun.SuiteRunId));
+
+                // Return the SuiteRunId for polling
+                return Ok(suiteRun.SuiteRunId);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Test Suite Execution, check progress
+        [HttpGet("GetSuiteRunProgress/{suiteRunId}")]
+        public async Task<IActionResult> GetSuiteRunProgress(int suiteRunId)
+        {
+            try
+            {
+                var suiteRun = await _testExecutionService.GetSuiteRunProgressAsync(suiteRunId);
+                if (suiteRun == null)
+                    return NotFound($"Suite run with ID {suiteRunId} not found.");
+
+                return Ok(suiteRun);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
         // Check Test Execution Status
         [HttpGet("CheckExecutionStatus/{executionRunId}")]

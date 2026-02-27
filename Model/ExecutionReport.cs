@@ -72,5 +72,8 @@ namespace QAgentApi.Model
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? UpdatedAt { get; set; }
+        public int? SuiteRunId { get; set; }
+        [ForeignKey(nameof(SuiteRunId))]
+        public TestSuiteRun? SuiteRun { get; set; }
     }
 }
