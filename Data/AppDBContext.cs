@@ -13,5 +13,6 @@ namespace QAgentApi.Data
         public DbSet<ExecutionRun> ExecutionRuns => Set<ExecutionRun>();
         public DbSet<ExecutionReport> ExecutionReports => Set<ExecutionReport>();
         public DbSet<Comment> Comments => Set<Comment>();
+        public DbSet<TestSuiteRun> TestSuiteRuns => Set<TestSuiteRun>();
     }
 }

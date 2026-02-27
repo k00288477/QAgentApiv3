@@ -126,6 +126,7 @@ builder.Services.AddScoped<ITestCaseRepository, TestCaseRepository>();
 builder.Services.AddScoped<ITestStepRepository, TestStepRepository>();
 builder.Services.AddScoped<ITestExecutionReportRepository, TestExecutionReportRepository>();
 builder.Services.AddScoped<IExecutionRunRepository, ExecutionRunRepository>();
+builder.Services.AddScoped<ITestSuiteRunRepository, TestSuiteRunRepository>();
 
 // HTTP client, see TestExecutionService for usage
 builder.Services.AddHttpClient<TestExecutionService>(client =>
