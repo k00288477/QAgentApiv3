@@ -105,7 +105,7 @@ namespace QAgentApi.Controllers
                 }
                 return Ok(status);
             }
-            catch (HttpRequestException ex) 
+            catch (HttpRequestException ex)
             {
                 return BadRequest($"Error communicating with test execution service: {ex.Message}");
             }
@@ -166,4 +166,5 @@ namespace QAgentApi.Controllers
 
 
         }
+    }
 }
