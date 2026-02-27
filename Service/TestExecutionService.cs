@@ -11,6 +11,7 @@ This class also interacts with the data layer to store and retrieve test executi
  */
 
 using QAgentApi.Model;
+using QAgentApi.Model.Dto;
 using QAgentApi.Repository.Interfaces;
 using System.Text;
 using System.Text.Json;
@@ -352,13 +353,38 @@ namespace QAgentApi.Service
             return suiteRun;
         }
 
-        public async Task<List<TestSuiteRun>> GetAllSuiteRunsByUserAsync(string userEmail)
+        public async Task<List<SuiteSummaryDto>> GetAllSuiteRunsByUserAsync(string userEmail)
         {
             var suiteRuns = await _testSuiteRunRepository.GetAllSuiteRunsByTestSuiteAuthor(userEmail);
             if (suiteRuns == null)
                 throw new Exception("No suite runs found.");
 
-            return suiteRuns;
+            return suiteRuns.Select(sr => new SuiteSummaryDto
+            {
+                SuiteRunId = sr.SuiteRunId,
+                TestSuiteId = sr.TestSuiteId,
+                TestSuiteTitle = sr.TestSuite?.Title,
+                Status = sr.Status,
+                StartedAt = sr.StartedAt,
+                CompletedAt = sr.CompletedAt,
+                ExecutionReports = sr.ExecutionReports?.Select(er => new ExecutionReportSummaryDto
+                {
+                    ExecutionReportId = er.ExecutionReportId,
+                    TestCaseId = er.TestCaseId,
+                    TestCaseTitle = er.TestCase?.Title,
+                    Status = er.Status,
+                    StartedAt = er.ExecutionDateTime
+                }).ToList() ?? new List<ExecutionReportSummaryDto>()
+            }).ToList();
+        }
+
+        public async Task<ExecutionReport> GetExecutionReportAsync(int executionReportId)
+        {
+            var report = await _executionReportRepository.GetExecutionReportById(executionReportId);
+            if (report == null)
+                throw new Exception($"Execution report with ID {executionReportId} not found.");
+
+            return report;
         }
 
         private DateTime? ParseDateTime(string? dateTimeString)

@@ -166,5 +166,21 @@ namespace QAgentApi.Controllers
 
 
         }
+
+        [HttpGet("GetReportById/{executionReportId}")]
+        public async Task<ActionResult> GetReportById(int executionReportId)
+        {
+            try
+            {
+                var report = await _testExecutionService.GetExecutionReportAsync(executionReportId);
+                if (report == null)
+                    return NotFound($"Execution report with ID {executionReportId} not found.");
+                return Ok(report);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
