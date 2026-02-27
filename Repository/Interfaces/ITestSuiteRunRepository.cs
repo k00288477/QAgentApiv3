@@ -7,5 +7,6 @@ namespace QAgentApi.Repository.Interfaces
         Task<TestSuiteRun> InsertNewTestSuiteRun(TestSuiteRun testSuiteRun);
         Task<TestSuiteRun?> GetSuiteById(int suiteRunId);
         Task<TestSuiteRun> UpdateSuiteRun(TestSuiteRun testSuiteRun);
+        Task<List<TestSuiteRun>> GetAllSuiteRunsByTestSuiteAuthor(string author);
     }
 }

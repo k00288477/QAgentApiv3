@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QAgentApi.Service;
+using System.Security.Claims;
 
 namespace QAgentApi.Controllers
 {
@@ -140,8 +142,28 @@ namespace QAgentApi.Controllers
             }
         }
 
-        // Cancel Test Execution
+        // Get all Suite Runs for the logged in user
+        [HttpGet("GetAllSuiteRuns")]
+        [Authorize]
+        public async Task<ActionResult> GetAllSuiteRuns()
+        {
+            try
+            {
+                // Get the user email from JWT Token
+                var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+                if (string.IsNullOrEmpty(userEmail))
+                {
+                    return Unauthorized("User not authorized");
+                }
+                // Call service to get all suite runs for the logged in user
+                var suiteRuns = await _testExecutionService.GetAllSuiteRunsByUserAsync(userEmail);
+                return Ok(suiteRuns);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
 
 
-    }
+        }
 }

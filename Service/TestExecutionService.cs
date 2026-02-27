@@ -352,6 +352,15 @@ namespace QAgentApi.Service
             return suiteRun;
         }
 
+        public async Task<List<TestSuiteRun>> GetAllSuiteRunsByUserAsync(string userEmail)
+        {
+            var suiteRuns = await _testSuiteRunRepository.GetAllSuiteRunsByTestSuiteAuthor(userEmail);
+            if (suiteRuns == null)
+                throw new Exception("No suite runs found.");
+
+            return suiteRuns;
+        }
+
         private DateTime? ParseDateTime(string? dateTimeString)
         {
             if (string.IsNullOrEmpty(dateTimeString))
