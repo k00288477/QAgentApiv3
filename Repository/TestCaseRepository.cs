@@ -12,9 +12,14 @@ namespace QAgentApi.Repository
         {
             _context = context;
         }
-        public Task DeleteTestCaseById(int testCaseId)
+        public async Task DeleteTestCaseById(int testCaseId)
         {
-            throw new NotImplementedException();
+            var testCase = await _context.TestCases.FindAsync(testCaseId);
+            if (testCase != null)
+            {
+                _context.TestCases.Remove(testCase);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<TestCase?> GetTestCaseById(int testCaseId)
@@ -31,9 +36,11 @@ namespace QAgentApi.Repository
             return testCase;
         }
 
-        public Task<TestCase> UpdateTestCase(TestCase testCase)
+        public async Task<TestCase> UpdateTestCase(TestCase testCase)
         {
-            throw new NotImplementedException();
+            _context.Update(testCase);
+            await _context.SaveChangesAsync();
+            return testCase;
         }
     }
 }

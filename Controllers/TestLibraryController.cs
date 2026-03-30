@@ -110,8 +110,34 @@ namespace QAgentApi.Controllers
             {
                 return NotFound($"Test case with ID {id} not found.");
             }
-            Console.WriteLine($"Retrieved Test Case: {testCase.Title}");    
+            Console.WriteLine($"Retrieved Test Case: {testCase.Title}");
             return Ok(testCase);
         }
+
+        [HttpPut("EditTestCase")]
+        public async Task<ActionResult<TestCase>> EditTestCase([FromBody] TestCase updatedTestCase)
+        {
+            var updatedResult = await _testCaseService.EditTestCase(updatedTestCase);
+            if (updatedResult == null)
+            {
+                return NotFound($"Test case with ID {updatedTestCase.TestCaseId} not found.");
+            }
+            return Ok(updatedResult);
+        }
+
+        [HttpDelete("DeleteTestCase/{id}")]
+        public async Task<ActionResult> DeleteTestCase(int id)
+        {
+            try
+            {
+                await _testCaseService.DeleteTestCase(id);
+                return Ok($"Test case with ID {id} deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return NotFound($"Error deleting test case with ID {id}: {ex.Message}");
+            }
+        }
+    
     }
 }
