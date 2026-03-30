@@ -9,7 +9,7 @@ namespace QAgentApi.Service
         private readonly ITestSuiteRepository _testSuiteRepository;
         private readonly ITestCaseRepository _testCaseRepository;
         // CONSTRUCTOR
-        public TestSuiteService(ITestSuiteRepository testSuiteRepository, ITestCaseRepository testCaseRepository    )
+        public TestSuiteService(ITestSuiteRepository testSuiteRepository, ITestCaseRepository testCaseRepository)
         {
             _testSuiteRepository = testSuiteRepository;
             _testCaseRepository = testCaseRepository;
@@ -31,5 +31,25 @@ namespace QAgentApi.Service
             return await _testCaseRepository.InsertNewTestCase(testCase);
         }
 
+        public async Task<TestSuite> EditTestSuite(TestSuite updatedTestSuite)
+        {
+            try
+            {
+                var existingTestSuite = await _testSuiteRepository.GetTestSuiteById(updatedTestSuite.TestSuiteId);
+                if (existingTestSuite == null)
+                {
+                    throw new Exception("Test suite not found");
+                }
+                // Update properties
+                existingTestSuite.Title = updatedTestSuite.Title;
+                existingTestSuite.Description = updatedTestSuite.Description;
+                return await _testSuiteRepository.UpdateTestSuite(existingTestSuite);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error updating test suite: " + ex.Message);
+            }
+
+        }
     }
 }

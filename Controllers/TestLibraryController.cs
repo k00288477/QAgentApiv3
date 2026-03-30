@@ -138,6 +138,18 @@ namespace QAgentApi.Controllers
                 return NotFound($"Error deleting test case with ID {id}: {ex.Message}");
             }
         }
-    
+
+        [HttpPut("EditTestSuite")]
+        public async Task<ActionResult<TestSuite>> EditTestSuite([FromBody] TestSuite updatedTestSuite)
+        {
+            var updatedResult = await _testSuiteService.EditTestSuite(updatedTestSuite);
+            if (updatedResult == null)
+            {
+                return NotFound($"Test suite with ID {updatedTestSuite.TestSuiteId} not found.");
+            }
+            return Ok(updatedResult);
+
+        }
+
     }
 }

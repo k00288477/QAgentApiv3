@@ -41,9 +41,12 @@ namespace QAgentApi.Repository
             return testSuite;
         }
 
-        public Task<TestSuite> UpdateTestSuite(TestSuite testSuite)
+        public async Task<TestSuite> UpdateTestSuite(TestSuite testSuite)
         {
-            throw new NotImplementedException();
+            _context.TestSuites.Update(testSuite);
+            await _context.SaveChangesAsync();
+            return testSuite;
+
         }
     }
 }
