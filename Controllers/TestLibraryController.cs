@@ -151,5 +151,19 @@ namespace QAgentApi.Controllers
 
         }
 
+        [HttpDelete("DeleteTestSUite/{id}")]
+        public async Task<ActionResult> DeleteTestSuite(int id)
+        {
+            try
+            {
+                await _testSuiteService.DeleteTestSuite(id);
+                return Ok($"Test suite with ID {id} deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return NotFound($"Error deleting test suite with ID {id}: {ex.Message}");
+            }
+
+        }
     }
 }

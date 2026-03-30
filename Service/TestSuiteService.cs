@@ -8,11 +8,13 @@ namespace QAgentApi.Service
         // Dependency Injection
         private readonly ITestSuiteRepository _testSuiteRepository;
         private readonly ITestCaseRepository _testCaseRepository;
+        private readonly TestCaseService _testCaseService;
         // CONSTRUCTOR
-        public TestSuiteService(ITestSuiteRepository testSuiteRepository, ITestCaseRepository testCaseRepository)
+        public TestSuiteService(ITestSuiteRepository testSuiteRepository, ITestCaseRepository testCaseRepository, TestCaseService testCaseService)
         {
             _testSuiteRepository = testSuiteRepository;
             _testCaseRepository = testCaseRepository;
+            _testCaseService = testCaseService;
         }
 
         // METHODS
@@ -50,6 +52,32 @@ namespace QAgentApi.Service
                 throw new Exception("Error updating test suite: " + ex.Message);
             }
 
+        }
+
+        public async Task DeleteTestSuite(int testSuiteId)
+        {
+            try
+            {
+                // First delete all test cases associated with the test suite
+                var existingTestSuite = await _testSuiteRepository.GetTestSuiteById(testSuiteId);
+                if (existingTestSuite == null)
+                {
+                    throw new Exception("Test suite not found");
+                }
+                if (existingTestSuite.TestCases != null)
+                {
+                    foreach (var testCase in existingTestSuite.TestCases)
+                    {
+                        await _testCaseService.DeleteTestCase(testCase.TestCaseId);
+                    }
+                }
+                // Then delete the test suite itself
+                await _testSuiteRepository.DeleteTestSuiteById(testSuiteId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error deleting test suite: " + ex.Message);
+            }
         }
     }
 }
