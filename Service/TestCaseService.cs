@@ -61,5 +61,29 @@ namespace QAgentApi.Service
             }
         }
 
+        public async Task DeleteTestCase(int id)
+        {
+            try
+            {
+                var existingTestCase = await _testCaseRepository.GetTestCaseById(id);
+                if (existingTestCase == null)
+                {
+                    throw new Exception($"Could not find a Test Case with the id: {id}");
+                }
+                // Delete Test Steps
+                var testSteps = await _testStepRepository.GetTestStepsByTestCaseId(id);
+                foreach (var step in testSteps)
+                {
+                    await _testStepRepository.DeleteTestStep(step.StepId);
+                }
+                // delete Test Case
+                await _testCaseRepository.DeleteTestCaseById(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error deleting test case: " + ex.Message);
+
+            }
+        }
     }
 }

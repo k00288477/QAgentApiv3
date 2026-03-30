@@ -30,9 +30,14 @@ namespace QAgentApi.Repository
             }
         }
 
-        public Task DeleteTestStepById(int testStepId)
+        public async Task DeleteTestStepById(int testStepId)
         {
-            throw new NotImplementedException();
+            var step = await _context.TestSteps.FindAsync(testStepId);
+            if (step != null)
+            {
+                _context.TestSteps.Remove(step);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public Task<TestStep?> GetTestStepById(int testStepId)

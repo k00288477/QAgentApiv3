@@ -124,5 +124,20 @@ namespace QAgentApi.Controllers
             }
             return Ok(updatedResult);
         }
+
+        [HttpDelete("DeleteTestCase/{id}")]
+        public async Task<ActionResult> DeleteTestCase(int id)
+        {
+            try
+            {
+                await _testCaseService.DeleteTestCase(id);
+                return Ok($"Test case with ID {id} deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return NotFound($"Error deleting test case with ID {id}: {ex.Message}");
+            }
+        }
+    
     }
 }
