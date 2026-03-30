@@ -31,9 +31,11 @@ namespace QAgentApi.Repository
             return testCase;
         }
 
-        public Task<TestCase> UpdateTestCase(TestCase testCase)
+        public async Task<TestCase> UpdateTestCase(TestCase testCase)
         {
-            throw new NotImplementedException();
+            _context.Update(testCase);
+            await _context.SaveChangesAsync();
+            return testCase;
         }
     }
 }
