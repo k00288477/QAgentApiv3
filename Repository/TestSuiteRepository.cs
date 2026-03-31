@@ -12,9 +12,14 @@ namespace QAgentApi.Repository
         {
             _context = context;
         }
-        public Task DeleteTestSuiteById(int testSuiteId)
+        public async Task DeleteTestSuiteById(int testSuiteId)
         {
-            throw new NotImplementedException();
+            var testSuite = await _context.TestSuites.FindAsync(testSuiteId);
+            if (testSuite != null)
+            {
+                _context.TestSuites.Remove(testSuite);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<List<TestSuite>?> GetAllTestSuitesByAuthor(string authorEmail)
