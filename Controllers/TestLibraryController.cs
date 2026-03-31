@@ -151,7 +151,7 @@ namespace QAgentApi.Controllers
 
         }
 
-        [HttpDelete("DeleteTestSUite/{id}")]
+        [HttpDelete("DeleteTestSuite/{id}")]
         public async Task<ActionResult> DeleteTestSuite(int id)
         {
             try
