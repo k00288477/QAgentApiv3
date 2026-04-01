@@ -378,6 +378,22 @@ namespace QAgentApi.Service
             }).ToList();
         }
 
+        public async Task<List<ExecutionReportSummaryDto>> GetAllStandaloneRunsByUserAsync(string userEmail)
+        {
+            var executionRuns = await _executionRunRepository.GetStandaloneExecutionRunsAsync(userEmail);
+
+            return executionRuns
+                .Where(er => er.ExecutionReport != null)
+                .Select(er => new ExecutionReportSummaryDto
+                {
+                    ExecutionReportId = er.ExecutionReport.ExecutionReportId,
+                    TestCaseId = er.TestCaseId,
+                    TestCaseTitle = er.TestCase.Title,
+                    Status = er.ExecutionReport.Status,
+                    StartedAt = er.ExecutionReport.ExecutionDateTime,
+                }).ToList();
+        }
+
         public async Task<ExecutionReport> GetExecutionReportAsync(int executionReportId)
         {
             var report = await _executionReportRepository.GetExecutionReportById(executionReportId);
