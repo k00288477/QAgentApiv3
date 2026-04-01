@@ -36,5 +36,17 @@ namespace QAgentApi.Repository
             await _context.SaveChangesAsync();
             return executionRun;
         }
+
+        public async Task<IEnumerable<ExecutionRun>> GetStandaloneExecutionRunsAsync(string userEmail)
+        {
+            return await _context.ExecutionRuns
+                .Include(er => er.TestCase)
+                .Include(er => er.ExecutionReport)
+                .Where(er =>
+                    er.TestCase.Author == userEmail &&
+                    (er.ExecutionReport == null || er.ExecutionReport.SuiteRunId == null))
+                .OrderByDescending(er => er.StartTime)
+                .ToListAsync();
+        }
     }
 }

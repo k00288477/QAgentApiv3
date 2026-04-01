@@ -167,6 +167,29 @@ namespace QAgentApi.Controllers
 
         }
 
+        // Get all standalone runs for the logged in user
+        [HttpGet("GetAllStandaloneRuns")]
+        [Authorize]
+        public async Task<ActionResult> GetAllStandaloneRuns()
+        {
+            try
+            {
+                // Get the user email from JWT Token
+                var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+                if (string.IsNullOrEmpty(userEmail))
+                {
+                    return Unauthorized("User not authorized");
+                }
+                // Call service to get all standalone runs for the logged in user
+                var standaloneRuns = await _testExecutionService.GetAllStandaloneRunsByUserAsync(userEmail);
+                return Ok(standaloneRuns);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpGet("GetReportById/{executionReportId}")]
         public async Task<ActionResult> GetReportById(int executionReportId)
         {

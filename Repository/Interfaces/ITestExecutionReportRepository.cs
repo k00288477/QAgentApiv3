@@ -12,5 +12,6 @@ namespace QAgentApi.Repository.Interfaces
         Task DeleteCommentById(int commentId);
         Task DeleteExecutionReportById(int executionReportId);
         Task<ExecutionReport> UpdateExecutionReport(ExecutionReport executionReport);
+
     }
 }
