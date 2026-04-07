@@ -1,0 +1,44 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Start API in background
+        env:
+          AppSettings__Issuer: ${{ secrets.JWT_ISSUER }}
+          AppSettings__Audience: ${{ secrets.JWT_AUDIENCE }}
+          AppSettings__Token: ${{ secrets.JWT_TOKEN }}
+          MYSQL_CONNECTION_STRING: ${{ secrets.MYSQL_CONNECTION_STRING }}
+          PORT: 5078
+        run: |
+          dotnet run --project QAgentApi.csproj &
+          echo "Waiting for API to start..."
+          sleep 10
+
+      - name: Run tests
+        env:
+          API_BASE_URL: http://localhost:5078
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        run: dotnet test QAgentApi.Tests/QAgentApi.Tests.csproj --verbosity normal

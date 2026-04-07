@@ -39,8 +39,8 @@ public class ApiSmokeTests : IDisposable
     {
         var payload = JsonSerializer.Serialize(new
         {
-            email = "test@account.com",
-            password = "password"
+            email = Environment.GetEnvironmentVariable("TEST_USER_EMAIL") ?? "test@account.com",
+            password = Environment.GetEnvironmentVariable("TEST_USER_PASSWORD") ?? "password"
         });
 
         var content = new StringContent(payload, System.Text.Encoding.UTF8, "application/json");
