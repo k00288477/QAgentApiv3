@@ -25,17 +25,16 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Start API in background
-        env:
-          ASPNETCORE_ENVIRONMENT: Production
-          AppSettings__Issuer: ${{ secrets.JWT_ISSUER }}
-          AppSettings__Audience: ${{ secrets.JWT_AUDIENCE }}
-          AppSettings__Token: ${{ secrets.JWT_TOKEN }}
-          MYSQL_CONNECTION_STRING: ${{ secrets.MYSQL_CONNECTION_STRING }}
-          PORT: 5078
         run: |
-          dotnet run --project QAgentApi.csproj &
+          export ASPNETCORE_ENVIRONMENT=Production
+          export AppSettings__Issuer=${{ secrets.JWT_ISSUER }}
+          export AppSettings__Audience=${{ secrets.JWT_AUDIENCE }}
+          export AppSettings__Token=${{ secrets.JWT_TOKEN }}
+          export MYSQL_CONNECTION_STRING=${{ secrets.MYSQL_CONNECTION_STRING }}
+          export PORT=5078
+          dotnet run --project QAgentApi.csproj --no-launch-profile &
           echo "Waiting for API to start..."
-          sleep 10
+          sleep 15
 
       - name: Run tests
         env:
