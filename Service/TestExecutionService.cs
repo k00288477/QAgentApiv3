@@ -42,6 +42,12 @@ namespace QAgentApi.Service
             _testSuiteRunRepository = testSuiteRunRepository;
             _testSuiteRepository = testSuiteRepository;
         }
+
+        public async Task<HttpResponseMessage> Test_AIEng_Connection()
+        {    
+            return await _httpClient.GetAsync("/");
+        }
+
         // Execute Single Test
         public async Task<ExecutionRun> ExecuteSingleTestCaseAsync(int testCaseId)
         {
