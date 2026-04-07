@@ -26,6 +26,7 @@ jobs:
 
       - name: Start API in background
         env:
+          ASPNETCORE_ENVIRONMENT: Production
           AppSettings__Issuer: ${{ secrets.JWT_ISSUER }}
           AppSettings__Audience: ${{ secrets.JWT_AUDIENCE }}
           AppSettings__Token: ${{ secrets.JWT_TOKEN }}
