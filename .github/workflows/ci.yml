@@ -39,6 +39,7 @@ jobs:
       - name: Start API in background
         run: |
           export ASPNETCORE_ENVIRONMENT=Production
+          export ASPNETCORE_URLS=http://0.0.0.0:5078
           export AppSettings__Issuer=${{ secrets.JWT_ISSUER }}
           export AppSettings__Audience=${{ secrets.JWT_AUDIENCE }}
           export AppSettings__Token=${{ secrets.JWT_TOKEN }}
