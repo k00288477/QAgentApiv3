@@ -20,6 +20,24 @@ namespace QAgentApi.Controllers
             _serviceScopeFactory = serviceScopeFactory;
         }
 
+        [HttpGet("TestAIEngineConnection")]
+        public async Task<IActionResult> TestAIEngineConnection()
+        {
+            try
+            {
+                var result = await _testExecutionService.Test_AIEng_Connection();
+                return Ok(result);
+            }
+            catch (HttpRequestException ex)
+            {
+                return BadRequest($"Error communicating with AI engine: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         // Execute Single Test Case
         [HttpPost("ExecuteSingleTestCase/{testCaseId}")]
         public async Task<IActionResult> ExecuteSingleTestCase(int testCaseId)
