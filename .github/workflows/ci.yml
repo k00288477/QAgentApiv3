@@ -1,0 +1,64 @@
+name: CI Pipeline
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: qagentdb
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Start API in background
+        run: |
+          export ASPNETCORE_ENVIRONMENT=Production
+          export ASPNETCORE_URLS=http://0.0.0.0:5078
+          export AppSettings__Issuer=${{ secrets.JWT_ISSUER }}
+          export AppSettings__Audience=${{ secrets.JWT_AUDIENCE }}
+          export AppSettings__Token=${{ secrets.JWT_TOKEN }}
+          export MYSQL_CONNECTION_STRING="server=127.0.0.1;port=3306;database=qagentdb;user=root;password=root"
+          export PORT=5078
+          dotnet run --project QAgentApi.csproj --no-launch-profile &
+          echo "Waiting for API to start..."
+          sleep 15
+
+      - name: Seed test user
+        run: |
+          sleep 5
+          curl -X POST http://localhost:5078/api/auth/register \
+            -H "Content-Type: application/json" \
+            -d '{"email":"test@account.com","password":"password"}'
+
+      - name: Run tests
+        env:
+          API_BASE_URL: http://localhost:5078
+          TEST_USER_EMAIL: test@account.com
+          TEST_USER_PASSWORD: password
+        run: dotnet test QAgentApi.Tests/QAgentApi.Tests.csproj --verbosity normal
