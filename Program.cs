@@ -48,35 +48,7 @@ builder.Services.AddCors(options =>
                 .AllowCredentials();
         });
 });
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowVue",
-//        policy =>
-//        {
-//            policy.AllowAnyOrigin() // Temporary - allows all origins
-//                  .AllowAnyHeader()
-//                  .AllowAnyMethod();
-//        });
-//});
 
-
-//// Authentication and Authorization
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(options =>
-//    {
-//        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-//        {
-//            ValidateIssuer = true,
-//            ValidateAudience = true,
-//            ValidateLifetime = true,
-//            ValidateIssuerSigningKey = true,
-//            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
-//            ValidAudience = builder.Configuration["AppSettings:Audience"],
-//            IssuerSigningKey = new SymmetricSecurityKey(
-//                Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!)
-//            )
-//        };
-//    });
 
 // Get JWT settings with fallback
 var jwtIssuer = builder.Configuration["AppSettings:Issuer"]
@@ -146,6 +118,18 @@ Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
 Console.WriteLine($"Is Production: {app.Environment.IsProduction()}");
 Console.WriteLine("========================================");
 
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+        var exception = exceptionHandlerPathFeature?.Error;
+        Console.WriteLine($"UNHANDLED EXCEPTION: {exception}");
+        context.Response.StatusCode = 500;
+        await context.Response.WriteAsync("Internal Server Error");
+    });
+});
+
 // run db migration on startup for production environment
 if (app.Environment.IsProduction())
 {
@@ -193,18 +177,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseExceptionHandler(errorApp =>
-{
-    errorApp.Run(async context =>
-    {
-        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-        var exception = exceptionHandlerPathFeature?.Error;
-        Console.WriteLine($"UNHANDLED EXCEPTION: {exception}");
-        context.Response.StatusCode = 500;
-        await context.Response.WriteAsync("Internal Server Error");
-    });
-});
 
 Console.WriteLine("========================================");
 Console.WriteLine("STARTING APPLICATION...");
