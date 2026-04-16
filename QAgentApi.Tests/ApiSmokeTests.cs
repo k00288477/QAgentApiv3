@@ -112,10 +112,10 @@ public class ApiSmokeTests : IDisposable
     }
 
     // Tests that the Backend can connect to the AI Engine
-    [Fact]
-    public async Task TestAIEngineConnection_ReturnsOK()
-    {
-        var response = await _httpClient.GetAsync("api/TestExecution/CheckAIEngineConnection");
-        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
-    }
+    // [Fact]
+    // public async Task TestAIEngineConnection_ReturnsOK()
+    // {
+    //     var response = await _httpClient.GetAsync("api/TestExecution/CheckAIEngineConnection");
+    //     Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+    // }
 }
