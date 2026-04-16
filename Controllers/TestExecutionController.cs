@@ -138,15 +138,15 @@ namespace QAgentApi.Controllers
         }
 
         // Get Test Execution Report from database by execution run ID  
-        [HttpGet("GetTestReportFromDB/{executionRunId}")]
-        public async Task<ActionResult> GetTestReportFromDB(int executionRunId)
+        [HttpGet("GetTestReportFromDB/{executionReportId}")]
+        public async Task<ActionResult> GetTestReportFromDB(int executionReportId)
         {
             try
             {   // Call service to get the test execution report from the database
-                var executionReport = await _testExecutionService.GetExecutionReportFromDatabaseAsync(executionRunId);
+                var executionReport = await _testExecutionService.GetExecutionReportAsync(executionReportId);
                 if (executionReport == null)
                 {
-                    return NotFound($"Execution report for execution run ID {executionRunId} not found in database.");
+                    return NotFound($"Execution report for execution run ID {executionReportId} not found in database.");
                 }
                 return Ok(executionReport);
             }
